@@ -137,14 +137,14 @@ export default function App() {
       return;
     }
     setSolution(sol);
-    //escapp.checkPuzzle(GLOBAL_CONFIG.escapp.puzzleId, sol, {}, (success, er_state) => {
-    //  if(success){
+    escapp.checkPuzzle(GLOBAL_CONFIG.escapp.puzzleId, sol, {}, (success, er_state) => {
+      if(success){
         onOpenScreen(SAFE_OPEN_SCREEN);    
-    //  }
-     //return success;
-    //});
+      }
+     return success;
+    });
     return true;
-    //Somentar escapp.checkPuzzle y el if para abrir la caja?
+    
   }
 
 

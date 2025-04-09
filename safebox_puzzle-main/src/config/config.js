@@ -12,7 +12,7 @@ export let GLOBAL_CONFIG = {
   message:"¡Has abierto la puerta! \n Pulsa 'Continuar' para entrar a la nueva sala.",
   url:"https://vishub.org/pictures/20203.png",
   escapp:{
-    endpoint:"https://escape.dit.upm.es/api/escapeRooms/369",
+    endpoint: "https://escapp.etsisi.upm.es/api/escapeRooms/157", //https://escape.dit.upm.es/api/escapeRooms/369",
     localStorageKey:"ESCAPP_SAFE_20223a",
     restoreState:"AUTO",
     imagesPath:"/images/",
@@ -22,7 +22,7 @@ export let GLOBAL_CONFIG = {
       locales:ESCAPP_LOCALES,
     },
     appPuzzleIds:[],
-    puzzleId: 2,
+    puzzleId: 1,
     notifications:false,
     rtc:true,
     forceValidation:process.env.NODE_ENV === "production",
