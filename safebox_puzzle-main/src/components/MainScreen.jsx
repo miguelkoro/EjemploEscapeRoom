@@ -21,7 +21,7 @@ const MainScreen = (props) => {
       setPassword((prevPassword) => [...prevPassword, value]);
     }
 
-    const shortBeep = document.getElementById("audio_beep");
+    //const shortBeep = document.getElementById("audio_beep");
 
     setTimeout(() => {
       if (password.length + 1 === props.config.passwordLength) {
@@ -40,9 +40,9 @@ const MainScreen = (props) => {
       }
     }, 300);
 
-    shortBeep.pause();
-    shortBeep.currentTime = 0;
-    shortBeep.play();
+    //shortBeep.pause();
+    //shortBeep.currentTime = 0;
+    //shortBeep.play();
   }
 
   const changeBoxLight = (success, solution) => {
@@ -81,10 +81,16 @@ const MainScreen = (props) => {
 
   return (<div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}>
       {props.show ? (<div id="container" style={{ width: boxWidth * 0.22, height: boxHeight * 0.4, marginLeft: boxWidth / 2 * 0.09 }}>
-          <audio id="audio_beep" src="sounds/beep-short.mp3" autostart="false" preload="auto" />
+          {/*<audio id="audio_beep" src="sounds/beep-short.mp3" autostart="false" preload="auto" />*/}
           <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
           <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
-          <div id="row1" className="row">
+          <div id="lock"  className="lock">
+            {/*<img 
+            src={"../images/" + "lock.png"} 
+            alt="lock" 
+            style={{ width: boxWidth * 0.22, height: boxHeight * 0.4, marginLeft: boxWidth / 2 * 0.09 }} />*/}
+          </div>
+          {/*<div id="row1" className="row">
             <BoxButton value={"1"} position={1} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
             <BoxButton value={"2"} position={2} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
             <BoxButton value={"3"} position={3} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
@@ -103,11 +109,11 @@ const MainScreen = (props) => {
             <BoxButton value={"*"} position={10} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
             <BoxButton value={"0"} position={11} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
             <BoxButton value={"#"} position={12} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-          </div>
+          </div>*/}
           <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.4 }} ></div> 
           <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.4 }} ></div> 
           <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.4 }} ></div> 
-        </div>) : null}
+          </div>) : null}
     </div>);
 };
 

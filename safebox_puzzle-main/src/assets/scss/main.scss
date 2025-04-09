@@ -1,5 +1,5 @@
 div#screen_main {
-	background-image: url("../images/background.jpg");
+	background-image:url("../images/lock.png");// url("../images/background.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -8,6 +8,20 @@ div#screen_main {
 	align-items: center;
 	justify-content: center;
 }
+//
+div.lock{
+	background-image: url("../images/lock.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%; /* Ocupa todo el ancho del contenedor */
+	height: 100%; /* Ocupa todo el alto del contenedor */
+}
+//
 
 div#container {
 	display: flex;
@@ -23,7 +37,7 @@ div#container div.row {
 }
 
 div.boxButton {
-	background-image: url("../images/background_number.jpg");
+	background-image: ("../images/background_number.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
