@@ -1,0 +1,29 @@
+div#escapp-modal.escapp_custom_dialog .escapp-modal__container{
+	font-family: Consolas, Roboto, sans-serif;
+	border: 4px solid black;
+	background: #ffcc00;
+}
+
+div#escapp-modal.escapp_custom_dialog .escapp-modal__header h2 {
+	color: black;
+	font-size: 22px;
+}
+
+div#escapp-modal.escapp_custom_dialog .escapp-modal__content {
+	color: black;
+	font-size: 16px;
+}
+
+div#escapp-modal.escapp_custom_dialog .escapp-modal-input {
+	background: black;
+	color: white;
+	font-family: Consolas, Roboto, sans-serif;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+div#escapp-modal.escapp_custom_dialog .escapp-modal__footer button {
+	background-color: #B31829;
+	font-family: Consolas;
+    font-weight: bold;
+}
