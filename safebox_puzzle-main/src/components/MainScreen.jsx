@@ -15,8 +15,9 @@ const MainScreen = (props) => {
   const [isRotating, setIsRotating] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [previousAngle, setPreviousAngle] = useState(0);
-
+  const [startAngle, setStartAngle] = useState(0); // Ángulo inicial del ratón
   const [roundedAngle, setRoundedAngle] = useState(0);
+  const [initialRotation, setInitialRotation] = useState(0); // Ángulo inicial del lock
 
 
   const onClickButton = (value) => {
@@ -93,14 +94,41 @@ const MainScreen = (props) => {
     setRotationAngle((prevAngle) => prevAngle + 90); // Incrementa 90 grados
   };
 
-  const handleMouseDown = () => {
+  const handleMouseDown = (event) => {
     setIsMouseDown(true); // Indica que el mouse está presionado
     
+    const lockElement = document.getElementById("lock");
+    const rect = lockElement.getBoundingClientRect();
+  
+    // Calcula el centro del div
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+  
+    // Calcula el ángulo inicial en radianes y lo convierte a grados
+    const radians = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+    let angle = radians * (180 / Math.PI);
+  
+    // Normaliza el ángulo para que esté entre 0° y 360°
+    if (angle < 0) {
+      angle += 360;
+    }
+    let rounded = Math.round(angle / 6) * 6;
+    // Guarda el ángulo inicial y el ángulo actual del lock
+    setStartAngle(rounded);
+    setInitialRotation(rotationAngle); // Guarda el ángulo actual del lock
     
   };
   
   const handleMouseUp = () => {
     setIsMouseDown(false); // Indica que el mouse ya no está presionado
+  };
+
+  const normalizeAngleDifference = (angle) => {
+    return ((angle + 180) % 360) - 180;
+  };
+
+  const normalizeAngle = (angle) => {
+    return ((angle % 360) + 360) % 360; // Asegura que el ángulo esté entre 0 y 360
   };
 
   const handleMouseMove = (event) => {
@@ -109,6 +137,8 @@ const MainScreen = (props) => {
     const lockElement = document.getElementById("lock");
     const rect = lockElement.getBoundingClientRect();
     let audio  = document.getElementById("audio_wheel");
+    //console.log("lockElement", lockElement);
+    //console.log("rect", rect);
   
     // Calcula el centro del div
     const centerX = rect.left + rect.width / 2;
@@ -126,6 +156,7 @@ const MainScreen = (props) => {
     if (angle < 0) {
       angle += 360;
     }
+    let rounded = Math.round(angle / 6) * 6;
   
     //setRotationAngle(angle); // Actualiza el ángulo de rotación
     //console.log("Rotation angle:", angle);
@@ -140,20 +171,23 @@ const MainScreen = (props) => {
     }*/
    // Redondea el ángulo al múltiplo de 6 más cercano
   //const roundedAngle = Math.round(angle / 6) * 6;
-  let rounded = Math.round(angle / 6) * 6;
+  /*let rounded = Math.round(angle / 6) * 6;
   if (rounded >= 360) {
     setRoundedAngle (0);
   }else{
     setRoundedAngle(Math.round(angle / 6) * 6)
   }
- ;
+ ;*/
   
 
-  // Redondea el ángulo al múltiplo de 6 más cercano
-  const roundedAngle = Math.round(angle / 6) * 6;
+   // Calcula la diferencia de ángulos de forma cíclica
+  const angleDifference = normalizeAngleDifference(rounded - startAngle);
 
-  // Actualiza el ángulo acumulado directamente
-  setRotationAngle(roundedAngle);
+   // Calcula la rotación acumulada y normalízala
+   const newRotation = normalizeAngle(initialRotation + angleDifference);
+
+  // Actualiza el ángulo de rotación
+  setRotationAngle(newRotation);
   // Solo actualiza el ángulo si es diferente del ángulo anterior
   //if (roundedAngle !== previousAngle) {
     /*if(roundedAngle >= 359){
@@ -161,7 +195,7 @@ const MainScreen = (props) => {
     }*/
     //setRotationAngle(roundedAngle); // Actualiza el ángulo de rotación
     //setPreviousAngle(roundedAngle); // Actualiza el ángulo anterior
-    console.log("Rotation angle (rounded):", roundedAngle, " numero:", roundedAngle / 6);
+    console.log("Rotation angle (rounded):", newRotation, " numero:", newRotation / 6, "angle difference:", angleDifference);
     audio.play();
   //}
   };
@@ -187,7 +221,7 @@ const MainScreen = (props) => {
           //backgroundColor: "black",
           width: Math.min(boxWidth, boxHeight) * 0.7, 
           height: Math.min(boxWidth, boxHeight) * 0.7, 
-          borderRadius: "50%", 
+          //borderRadius: "50%", 
           //backgroundColor: "black", // Color de fondo
           alignItems: "center"}}
           onMouseDown={handleMouseDown} // Inicia la rotación
@@ -198,11 +232,13 @@ const MainScreen = (props) => {
           //onMouseEnter={isMouseDown && handleMouseMove } // Inicia la rotación si el mouse entra en el div
           >
           
-        <div id="lock" style={{ width: boxWidth * 0.4, height: boxHeight * 0.4, 
-           marginLeft: boxWidth / 2 * 0.125,
-           marginTop: boxHeight / 2 * 0.3,
+        <div id="lock" style={{ 
+          width: Math.min(boxWidth, boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
+          height: Math.min(boxWidth, boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
+          marginLeft: boxWidth / 2 * 0.225,
+          marginTop: boxHeight / 2 * 0.3,
           transform: `rotate(${rotationAngle}deg)`, // Rotación dinámica
-          //transition: "transform 1s ease", // Animación suave
+          //transition: isMouseDown ? "none":"transform 2s ease", // Animación suave
           } }>
 
           </div>
@@ -218,7 +254,7 @@ const MainScreen = (props) => {
             userSelect: "none", // Evita que el texto sea seleccionable
             fontWeight: "bold", // Aplica el estilo en negrita
             fontSize : "10vmin", // Cambia el tamaño de la fuente
-          }}>{roundedAngle/6}</p> 
+          }}>{rotationAngle/6}</p> 
         
         <div id="container" style={{ width: boxWidth * 0.22, height: boxHeight * 0.4, marginLeft: boxWidth / 2 * 0.09 }}>
           {/*<audio id="audio_beep" src="sounds/beep-short.mp3" autostart="false" preload="auto" />*/}
