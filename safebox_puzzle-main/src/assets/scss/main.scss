@@ -1,5 +1,5 @@
 div#screen_main {
-	background-image:url("../images/lock.png");// url("../images/background.jpg");
+	background-image:url("../images/background_lock.png");// url("../images/background.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -9,18 +9,24 @@ div#screen_main {
 	justify-content: center;
 }
 //
-div.lock{
+div#lock{
 	background-image: url("../images/lock.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	width: 100%; /* Ocupa todo el ancho del contenedor */
-	height: 100%; /* Ocupa todo el alto del contenedor */
+	//background-color: red;
+
+	//animation: rotate-lock 2s linear infinite; /* Animación de rotación */
 }
+//@keyframes rotate-lock {
+//	from {
+//	  transform: rotate(0deg); /* Inicio de la rotación */
+//	}
+//	to {
+//	  transform: rotate(360deg); /* Rotación completa */
+//	}
+//  }
 //
 
 div#container {
@@ -34,6 +40,7 @@ div#container div.row {
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
+	
 }
 
 div.boxButton {
@@ -79,6 +86,7 @@ div.boxlight {
 	outline: none;
 	text-decoration: none;
 	border-image: none;
+
 }
 
 div.boxlight.boxlight_off {
