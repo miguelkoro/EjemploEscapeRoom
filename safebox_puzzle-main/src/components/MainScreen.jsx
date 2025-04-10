@@ -12,12 +12,12 @@ const MainScreen = (props) => {
 
   //
   const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
-  const [isRotating, setIsRotating] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [previousAngle, setPreviousAngle] = useState(0);
+  const [isMouseDown, setIsMouseDown] = useState(false); // Estado para saber si el mouse está presionado
   const [startAngle, setStartAngle] = useState(0); // Ángulo inicial del ratón
-  const [roundedAngle, setRoundedAngle] = useState(0);
   const [initialRotation, setInitialRotation] = useState(0); // Ángulo inicial del lock
+
+  const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
+  
 
 
   const onClickButton = (value) => {
@@ -90,9 +90,15 @@ const MainScreen = (props) => {
   };
 
   // ------------------
-  const rotateLock = () => {
-    setRotationAngle((prevAngle) => prevAngle + 90); // Incrementa 90 grados
-  };
+
+  const  reset = () =>{
+    setIsReseting(true);
+    setRotationAngle(0);
+    setTimeout(() => {      
+      setIsReseting(false);
+    }, 1000);
+
+  }
 
   const handleMouseDown = (event) => {
     setIsMouseDown(true); // Indica que el mouse está presionado
@@ -121,7 +127,15 @@ const MainScreen = (props) => {
   
   const handleMouseUp = () => {
     setIsMouseDown(false); // Indica que el mouse ya no está presionado
+    reset(); // Reinicia la rotación
+    
   };
+
+  function getRotationDirection(prev, curr) {
+    const diff = (curr - prev + 60) % 60;
+    if (diff === 0) return '';
+    return diff < 30 ? 'clockwise' : 'counter-clockwise';
+  }
 
   const normalizeAngleDifference = (angle) => {
     return ((angle + 180) % 360) - 180;
@@ -137,19 +151,11 @@ const MainScreen = (props) => {
     const lockElement = document.getElementById("lock");
     const rect = lockElement.getBoundingClientRect();
     let audio  = document.getElementById("audio_wheel");
-    //console.log("lockElement", lockElement);
-    //console.log("rect", rect);
-  
+
     // Calcula el centro del div
     const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-  
-    // Calcula el ángulo en radianes y lo convierte a grados
-    /*const radians = Math.atan2(event.clientY - centerY, event.clientX - centerX);
-    //const angle = radians * (180 / Math.PI);
-    let dX = event.clientX - centerX;
-    let dY = event.clientY - centerY;
-    let angle = Math.atan(- dX / dY) * 180 / Math.PI;*/
+    const centerY = rect.top + rect.height / 2;  
+
 
     const radians = Math.atan2(event.clientY - centerY, event.clientX - centerX);
     let angle = radians * (180 / Math.PI);
@@ -158,60 +164,29 @@ const MainScreen = (props) => {
     }
     let rounded = Math.round(angle / 6) * 6;
   
-    //setRotationAngle(angle); // Actualiza el ángulo de rotación
-    //console.log("Rotation angle:", angle);
-    // Calcula la diferencia entre el ángulo actual y el anterior
-    /*const angleDifference = Math.abs(angle - previousAngle);
-
-    // Solo actualiza el ángulo si la diferencia es mayor o igual a 6°
-    if (angleDifference >= 6) {
-      setRotationAngle(angle); // Actualiza el ángulo de rotación
-      setPreviousAngle(angle); // Actualiza el ángulo anterior
-      console.log("Rotation angle:", angle, " number: ", angle/6);
-    }*/
-   // Redondea el ángulo al múltiplo de 6 más cercano
-  //const roundedAngle = Math.round(angle / 6) * 6;
-  /*let rounded = Math.round(angle / 6) * 6;
-  if (rounded >= 360) {
-    setRoundedAngle (0);
-  }else{
-    setRoundedAngle(Math.round(angle / 6) * 6)
-  }
- ;*/
-  
 
    // Calcula la diferencia de ángulos de forma cíclica
   const angleDifference = normalizeAngleDifference(rounded - startAngle);
 
    // Calcula la rotación acumulada y normalízala
    const newRotation = normalizeAngle(initialRotation + angleDifference);
-
-  // Actualiza el ángulo de rotación
-  setRotationAngle(newRotation);
-  // Solo actualiza el ángulo si es diferente del ángulo anterior
+   console.log(getRotationDirection(rotationAngle/6, newRotation/6));
+    if(rotationAngle === newRotation)
+      return; // No actualiza si el ángulo no ha cambiado
+    // Actualiza el ángulo de rotación
+    setRotationAngle(newRotation);
+    // Solo actualiza el ángulo si es diferente del ángulo anterior
   //if (roundedAngle !== previousAngle) {
     /*if(roundedAngle >= 359){
       setRoundedAngle(0); // Reinicia el ángulo a 0 si es 60
     }*/
     //setRotationAngle(roundedAngle); // Actualiza el ángulo de rotación
     //setPreviousAngle(roundedAngle); // Actualiza el ángulo anterior
-    console.log("Rotation angle (rounded):", newRotation, " numero:", newRotation / 6, "angle difference:", angleDifference);
+    //console.log("Rotation angle (rounded): ", rotationAngle/6, " start angle: ", startAngle, " initial rotation (rounded): ", initialRotation/6);
+    //console.log(getRotationDirection(initialRotation/6, rotationAngle/6));
     audio.play();
   //}
   };
-  /*const handleMouseMove = (event) => {
-   
-    var face = document.getElementById("bigFace");
-    var faceX = face.offsetLeft+ face.offsetWidth/2;
-    var faceY = face.offsetTop + face.offsetHeight/2;
-    var dX = faceX - event.clientX;
-    var dY = faceY - event.clientY;
-    var degree = Math.atan(- dX / dY) * 180 / Math.PI;
-    if (dY > 0){degree += 180}
-
-    face.style.transform = "rotate("+degree+"deg)" 
-  
-};*/
   //  -----------------
 
   return (<div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") 
@@ -237,8 +212,10 @@ const MainScreen = (props) => {
           height: Math.min(boxWidth, boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
           marginLeft: boxWidth / 2 * 0.225,
           marginTop: boxHeight / 2 * 0.3,
-          transform: `rotate(${rotationAngle}deg)`, // Rotación dinámica
-          //transition: isMouseDown ? "none":"transform 2s ease", // Animación suave
+          transform: `rotate(${rotationAngle}deg)`, // Rotación dinámica.
+          pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
+          transition: isReseting ? "transform 1s ease" : "none", // Transición suave solo durante el reset
+
           } }>
 
           </div>
