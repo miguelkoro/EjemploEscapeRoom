@@ -17,7 +17,14 @@ const MainScreen = (props) => {
   const [initialRotation, setInitialRotation] = useState(0); // Ángulo inicial del lock
 
   const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
+  const [tries, setTries] = useState(0); // Contador de intentos
+  const [rotationDirection, setRotationDirection] = useState(""); // Dirección de rotación
+
+  const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
   
+
+  const solucion = [25,-55,50, -15]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha
+  const passwordEscapp = 12345; //Contraseña de la sala del escape room
 
 
   const onClickButton = (value) => {
@@ -92,13 +99,47 @@ const MainScreen = (props) => {
   // ------------------
 
   const  reset = () =>{
+    console.log("Solution: ", solutionArray);
     setIsReseting(true);
     setRotationAngle(0);
+    setSolutionArray([]);
+    setRotationDirection("");
+    setStartAngle(0);
+    setTries(0);
     setTimeout(() => {      
       setIsReseting(false);
     }, 1000);
-
   }
+
+  const checkSolution = () => {
+    // Aquí puedes implementar la lógica para verificar si la solución es correcta
+    // Por ejemplo, puedes comparar el array de soluciones con la solución esperada
+    console.log("Checking solution:", solutionArray);
+    if(solutionArray.every((value, index) => value === solucion[index])){
+      // Si la solución es correcta, puedes ejecutar una acción
+      console.log("Correct solution!");
+      let audio = document.getElementById("audio_success");
+      audio.play();
+      props.onTryBoxOpen(passwordEscapp); //Si se ha acertado envia la contraseña del escape room
+    }else{
+      changeBoxLight(false, solutionArray);
+      reset();
+    }
+  }
+
+  useEffect(() => {
+    console.log("Solution array updated:", solutionArray);
+    // Comprueba si se ha alcanzado el número máximo de intentos
+    if (tries >= solucion.length) {
+      console.log("Solution:", solutionArray);
+      setTries(0);
+      checkSolution();
+      //reset();
+    } else {
+      setTries((tries) => tries + 1);
+    }
+
+  }, [solutionArray]);
 
   const handleMouseDown = (event) => {
     setIsMouseDown(true); // Indica que el mouse está presionado
@@ -127,8 +168,16 @@ const MainScreen = (props) => {
   
   const handleMouseUp = () => {
     setIsMouseDown(false); // Indica que el mouse ya no está presionado
-    reset(); // Reinicia la rotación
-    
+    //reset(); // Reinicia la rotación //Poniendolo aqui, hace efecto de teelfono de dial
+
+    //Aqui poner los eventos de guardar, el angulo inicial, final y comprobar que direccion se ha estado siguiendo, 
+    //ademas reiniciar la variable que comprueba si es contrarreloj o no
+    // Actualiza el array de soluciones y usa el valor actualizado
+    //Para poder poner -55 si va contrarreloj o 30 si va a favor
+    setSolutionArray((sol) => [...sol, (rotationDirection === "clockwise" ? rotationAngle/6 : -rotationAngle/6)]);
+      //console.log("Tries:", tries, "Solution:", updatedArray, "New angle:", rotationAngle / 6);
+
+    setRotationDirection('');
   };
 
   function getRotationDirection(prev, curr) {
@@ -166,31 +215,29 @@ const MainScreen = (props) => {
   
 
    // Calcula la diferencia de ángulos de forma cíclica
-  const angleDifference = normalizeAngleDifference(rounded - startAngle);
+    const angleDifference = normalizeAngleDifference(rounded - startAngle);
 
    // Calcula la rotación acumulada y normalízala
-   const newRotation = normalizeAngle(initialRotation + angleDifference);
-   console.log(getRotationDirection(rotationAngle/6, newRotation/6));
+    const newRotation = normalizeAngle(initialRotation + angleDifference);
+    const rotationDir = getRotationDirection(rotationAngle/6, newRotation/6);
+    if(rotationDirection === ''){
+      setRotationDirection(rotationDir);
+    }else if(rotationDirection !== rotationDir){
+      return;
+    }
+
     if(rotationAngle === newRotation)
       return; // No actualiza si el ángulo no ha cambiado
     // Actualiza el ángulo de rotación
     setRotationAngle(newRotation);
-    // Solo actualiza el ángulo si es diferente del ángulo anterior
-  //if (roundedAngle !== previousAngle) {
-    /*if(roundedAngle >= 359){
-      setRoundedAngle(0); // Reinicia el ángulo a 0 si es 60
-    }*/
-    //setRotationAngle(roundedAngle); // Actualiza el ángulo de rotación
-    //setPreviousAngle(roundedAngle); // Actualiza el ángulo anterior
-    //console.log("Rotation angle (rounded): ", rotationAngle/6, " start angle: ", startAngle, " initial rotation (rounded): ", initialRotation/6);
-    //console.log(getRotationDirection(initialRotation/6, rotationAngle/6));
+
     audio.play();
-  //}
+
   };
   //  -----------------
 
   return (<div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") 
-       }onMouseUp={handleMouseUp}>
+       }onMouseUp={handleMouseUp} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} >
       {props.show ? (
         <div className='lockContainer' style={{ width: boxWidth , height: boxHeight ,  borderRadius: "50%", 
           //backgroundColor: "black",
@@ -199,11 +246,12 @@ const MainScreen = (props) => {
           //borderRadius: "50%", 
           //backgroundColor: "black", // Color de fondo
           alignItems: "center"}}
-          onMouseDown={handleMouseDown} // Inicia la rotación
-          onMouseUp={handleMouseUp} // Detiene la rotación
+          onDragStart={(event) => event.preventDefault()}
+          //onMouseDown={handleMouseDown} // Inicia la rotación
+          //onMouseUp={handleMouseUp} // Detiene la rotación
           //onMouseLeave={handleMouseUp} // Detiene la rotación si el mouse sale del div
           //onMouseMove={handleMouseMove} // Maneja el movimiento del ratón
-          onMouseMove={handleMouseMove} // Maneja el movimiento del ratón
+          //onMouseMove={handleMouseMove} // Maneja el movimiento del ratón
           //onMouseEnter={isMouseDown && handleMouseMove } // Inicia la rotación si el mouse entra en el div
           >
           
@@ -231,7 +279,7 @@ const MainScreen = (props) => {
             userSelect: "none", // Evita que el texto sea seleccionable
             fontWeight: "bold", // Aplica el estilo en negrita
             fontSize : "10vmin", // Cambia el tamaño de la fuente
-          }}>{rotationAngle/6}</p> 
+          }} onDragStart={(event) => event.preventDefault()} >{rotationAngle/6}</p> 
         
         <div id="container" style={{ width: boxWidth * 0.22, height: boxHeight * 0.4, marginLeft: boxWidth / 2 * 0.09 }}>
           {/*<audio id="audio_beep" src="sounds/beep-short.mp3" autostart="false" preload="auto" />*/}
