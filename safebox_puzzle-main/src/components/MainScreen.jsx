@@ -19,8 +19,8 @@ const MainScreen = (props) => {
 
   const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
   
-  const TEST_LOCAL = true; // Cambiar a true para usar la solución local
-  const SOLUTION_LOCAL = [25,-55,50, -15]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha
+  const TEST_LOCAL = false; // Cambiar a true para usar la solución local
+  const SOLUTION_LOCAL = [25,-55,50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
@@ -82,10 +82,15 @@ const MainScreen = (props) => {
 
   const checkApiSolution = () => {
     setChecking(true);
-    props.escapp.checkPuzzle(props.config.escapp.puzzleId, PASSWORD_API, {}, (success) => {
+    if(solutionArray.every((value, index) => value === SOLUTION_LOCAL[index])){ //Para saber si es igual (Esto se haria en la api)
+     props.escapp.checkPuzzle(props.config.escapp.puzzleId, PASSWORD_API, {}, (success) => {
       changeBoxLight(success, PASSWORD_API);
-    });
-  }
+      });
+    }else{
+      props.escapp.checkPuzzle(props.config.escapp.puzzleId, "", {}, (success) => {
+        changeBoxLight(success, PASSWORD_API);
+    });}
+  } 
 
 
   useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
