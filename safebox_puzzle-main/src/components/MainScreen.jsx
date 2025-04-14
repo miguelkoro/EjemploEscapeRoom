@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './../assets/scss/main.scss';
 
+import VideoJS from './VideoJS'
+import "video.js/dist/video-js.css";
+import "videojs-youtube";
+import televisionImage from "../assets/images/Television.png";
+
 const MainScreen = (props) => {
   const [checking, setChecking] = useState(false);
   const [light, setLight] = useState("off");
@@ -165,40 +170,47 @@ const MainScreen = (props) => {
   };
   //  -----------------
 
+  const playerRef = React.useRef(null);
+
+  const videoJsOptions = {
+    autoplay: true,
+    controls: true,
+    responsive: true,
+    fluid: true,
+    techOrder: ['youtube'],
+    sources: [{
+      src: 'https://www.youtube.com/watch?v=cv8o0Aog7tk',
+      type: 'video/youtube'
+    }]
+  };
+
+  const handlePlayerReady = (player) => {
+    playerRef.current = player;
+
+    // You can handle player events here, for example:
+    player.on('waiting', () => {
+      videojs.log('player is waiting');
+    });
+
+    player.on('dispose', () => {
+      videojs.log('player will dispose');
+    });
+  };
+
   return (
-      <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") 
-            }onMouseUp={handleMouseUp} 
-            onMouseDown={handleMouseDown} 
-            onMouseMove={handleMouseMove} >
-        {props.show ? (
-          <div className='lockContainer' style={{ width: boxWidth , height: boxHeight ,  borderRadius: "50%", 
-            width: Math.min(boxWidth, boxHeight) * 0.7, 
-            height: Math.min(boxWidth, boxHeight) * 0.7, 
-            alignItems: "center"}}
-            onDragStart={(event) => event.preventDefault()
-          }>
-          
-            <div id="lock" style={{ 
-              width: Math.min(boxWidth, boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              height: Math.min(boxWidth, boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              marginLeft: boxWidth / 2 * 0.225,
-              marginTop: boxHeight / 2 * 0.3,
-              transform: `rotate(${rotationAngle}deg)`, // Rotación dinámica.
-              pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
-              transition: isReseting ? "transform 1s ease" : "none", // Transición suave solo durante el reset
-            }}></div>
-            <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
-              style={{position: "absolute", // Posiciona el <p> absolutamente dentro del contenedor
-                top: "50%", // Centra verticalmente
-                left: "50%", // Centra horizontalmente
-                transform: "translate(-50%, -50%)", // Ajusta el centrado
-                margin: 0, // Elimina el margen del <p>
-                pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
-                color: "black", // Cambia el color del texto
-                userSelect: "none", // Evita que el texto sea seleccionable
-                fontStyle: "bold", // Aplica el estilo en negrita
-                fontSize : "13vmin", // Cambia el tamaño de la fuente
-              }}>{rotationAngle/6}</p> 
+      <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }style={{
+        position: "relative", // Contenedor principal con posición relativa
+      width: "100%",
+      height: "100%", // Una columna que ocupa todo el espacio
+      }}>
+        {props.show ? (         
+         
+          <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
+            <div style={{width: boxWidth *0.65, position:"absolute",  marginLeft: "7%", marginTop: "22%"}}>
+              <VideoJS options={videoJsOptions} onReady={handlePlayerReady}/>
+            </div>
+            <img id="television" src={televisionImage} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute", left: 0, top: 0}}/>
+         
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
@@ -207,7 +219,9 @@ const MainScreen = (props) => {
             <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
             <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
             <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-        </div>) : null}
+            </div>
+        ) : null
+        }
     </div>);
 };
 
