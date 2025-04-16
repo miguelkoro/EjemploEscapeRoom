@@ -179,7 +179,7 @@ const MainScreen = (props) => {
     fluid: true,
     techOrder: ['youtube'],
     sources: [{
-      src: 'https://www.youtube.com/watch?v=cv8o0Aog7tk',
+      src: 'https://www.youtube.com/watch?v=iYYRH4apXDo',
       type: 'video/youtube'
     }]
   };
@@ -198,11 +198,7 @@ const MainScreen = (props) => {
   };
 
   return (
-      <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }style={{
-        position: "relative", // Contenedor principal con posición relativa
-      width: "100%",
-      height: "100%", // Una columna que ocupa todo el espacio
-      }}>
+      <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }>
         {props.show ? (         
          
           <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
