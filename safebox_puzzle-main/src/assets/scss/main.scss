@@ -1,3 +1,5 @@
+//@import url('https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sixtyfour:BLED,SCAN@33,-2&display=swap');
 div#screen_main {
 	//background-image:url("../images/background_lock.png");// url("../images/background.jpg");
 	background-position: center;
@@ -7,7 +9,7 @@ div#screen_main {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	background-color: black;
+	background-color: rgb(139, 87, 184);
 }
 //
 div#lock{
@@ -18,7 +20,71 @@ div#lock{
 	display: flex;
 }
 //
+div.boxButton{
+	background-image: url("../images/background_number.jpg");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	padding-bottom: 3px;
+}
 
+p.channel{
+	font-size: 7vmin;
+	position: relative;
+	color: rgb(15, 167, 15);
+	margin-top: 22%;
+	margin-left: 10%;
+	//max-width: 40%;
+	//background-color: rgba(0, 0, 0, 0.425);
+	/*font-family: "Sixtyfour Convergence", sans-serif;
+	font-optical-sizing: auto;
+	//font-weight: 400;
+	//font-style: normal;
+	font-variation-settings:
+	  "BLED" 80,
+	  "SCAN" 80,
+	  "XELA" 80,
+	  "YELA" 80;*/
+	font-family: "Sixtyfour", sans-serif;
+	font-optical-sizing: auto;
+	//font-weight: 400;
+	font-style: normal;
+	font-variation-settings:
+		"BLED" 70,
+		"SCAN" 10;
+
+	/* Fondo semitransparente detrás del texto */
+	background-color: rgba(0, 0, 0, 0.5); /* Fondo negro semitransparente */
+	display: inline-block; /* Asegura que el fondo solo ocupe el área del texto */
+	//padding: 0.2em 0.4em; /* Espaciado alrededor del texto */
+	//padding-right: 0.2em;
+	padding-left: 0.2em;
+	border-radius: 6px; /* Bordes redondeados opcionales */
+	/* Añade el guion bajo parpadeante */
+	/* Guion bajo parpadeante solo si tiene la clase `show-cursor` */
+	&::after {
+		content: ""; /* Por defecto, no muestra nada */
+		display: inline-block;
+		margin-left: 0.2em;
+		color: rgb(15, 167, 15);
+		animation: none; /* Sin animación por defecto */
+	}
+  
+	&.show-cursor::after {
+		content: "_"; /* Muestra el guion bajo */
+	  	animation: blink 1s steps(2, start) infinite; /* Aplica la animación */
+	}
+  }
+  
+  /* Animación de parpadeo */
+  @keyframes blink {
+	0%, 50% {
+	  opacity: 1;
+	}
+	50.01%, 100% {
+	  opacity: 0;
+	}
+  }
 
 div.boxlight {
 	position: absolute;
@@ -44,4 +110,61 @@ div.boxlight.boxlight_red {
 
 div.boxlight.boxlight_green {
 	background-image: url("../images/light_green.png");
+}
+
+div.boxButton li {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	font-size: 4vmin;
+	font-family: "Consolas", "Roboto", sans-serif;
+  	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none; 
+    -moz-user-select: none;
+    -ms-user-select: none; 
+    user-select: none;
+    cursor: pointer; 
+	
+
+
+}
+
+div.boxButton p {
+	margin: 0;
+	padding: 0;
+	text-align: center; /* Centra el texto */
+	line-height: 1; /* Ajusta la altura de línea */
+  }
+
+div.boxButton {
+	background-image: url("../images/ButtonTV.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	display: flex;
+	color: white;
+
+}
+
+div.boxButton:active {
+	transform: scale(0.9);
+}
+div.row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	position: absolute;
+	top: 47%;
+	left: 86.5%;
+	transform: translateX(-50%);
+    z-Index: 2;
+	justify-content: center;
+	gap: 5px;
+	
 }
