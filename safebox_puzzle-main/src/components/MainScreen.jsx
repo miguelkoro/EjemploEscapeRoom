@@ -162,6 +162,7 @@ const MainScreen = (props) => {
       //setShowSolution(false); // Oculta el <p> después de 3 segundos
       setSolution(""); // Reinicia la solución
       setChecking(false); // Reinicia el estado de checking //CAMBIARLO A CUANDO HAGA EL CHEQUEO CON LA API
+      setLight("off");
       
     }, 3000); // Espera 3 segundos antes de ocultar el <p>
     
@@ -181,6 +182,7 @@ const MainScreen = (props) => {
 
   const wrongChannel = () => {
     setPlayerOptions(mp4VideoOptions); // Guarda las opciones en el estado `playerOptions`  
+    setLight("red");
     if (playerRef.current) {
       try{
       playerRef.current.pause(); // Pausa el video actual
@@ -195,6 +197,7 @@ const MainScreen = (props) => {
 
   const rightChannel = () => {
     setPlayerOptions(youtubeVideoOptions); // Guarda las opciones en el estado `playerOptions`
+    setLight("green");
     if (playerRef.current) {
       try{
       playerRef.current.pause(); // Pausa el video actual
@@ -222,6 +225,9 @@ const MainScreen = (props) => {
         type: "video/mp4",
       },
     ],
+    userActions: {
+      click: false
+    }
   };
 
   // Opciones para el video de YouTube
@@ -237,10 +243,7 @@ const MainScreen = (props) => {
         src: "https://youtu.be/dQw4w9WgXcQ?si=ReWN7oDLo1kUD1zR&t=42",//"https://www.youtube.com/watch?v=iYYRH4apXDo",
         type: "video/youtube",
       },
-    ],
-    userActions: {
-      click: false
-    }
+    ]    
   };
 
   const [playerOptions, setPlayerOptions] = useState(mp4VideoOptions); // Estado para las opciones del reproductor
@@ -279,10 +282,7 @@ const MainScreen = (props) => {
         {props.show ? (         
          
           <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
-            {/** Luces de correcto o incorrecto*/}
-            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+           
             {/** Reproductor de video */}
             <div style={{width: boxWidth *0.77, position:"absolute",  marginLeft: "0.5%", marginTop: "18.6%"}}>
               <VideoJS  options={playerOptions}
@@ -290,6 +290,11 @@ const MainScreen = (props) => {
                 
             </div>
             <img id="television" src={televisionImage} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute", left: 0, top: 0}}/>
+             {/** Luces de correcto o incorrecto*/}
+            <div className="boxlight boxlight_off" style={{position: "absolute", display: light === "off" ? "block" : "none", marginLeft: "90%", marginTop: "17%" }} ></div> 
+            <div className="boxlight boxlight_red" style={{position: "absolute", display: light === "red" ? "block" : "none", marginLeft: "90%", marginTop: "17%"  }} ></div> 
+            <div className="boxlight boxlight_green" style={{position: "absolute", display: light === "green" ? "block" : "none", marginLeft: "90%", marginTop: "17%" }} ></div> 
+            {/** CANAL */}
             {solution && (<p className={`channel ${showCursor ? "show-cursor" : ""}`}>{solution}</p>)}
             {/*<button  onClick={playVideo} style={{position: "absolute", top: "10px",left: "10px", zIndex: 10,padding: "10px 20px",
               backgroundColor: "#007BFF", color: "#fff", border: "none",borderRadius: "5px", cursor: "pointer", }}>
