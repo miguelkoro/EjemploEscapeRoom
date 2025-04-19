@@ -17,22 +17,21 @@ const MainScreen = (props) => {
 
   //
   const [isYoutube, setIsYoutube] = useState(false); // Estado para alternar entre MP4 y YouTube
-  //const playerRef = React.useRef(null);
   const playerRef = useRef(null); // Referencia al reproductor de Video.js (Removed duplicate declaration)
 
 
 
-  const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
-  const [tries, setTries] = useState(0); // Contador de intentos
+  //const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
+  //const [tries, setTries] = useState(0); // Contador de intentos
 
-  const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
+  //const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
   const [solution, setSolution] = useState(""); // Variable para guardar la solución
   const [timer, setTimer] = useState(null); // Temporizador para los 5 segundos
   const [showCursor, setShowCursor] = useState(false); // Controla si se muestra el guion bajo
-  const [showSolution, setShowSolution] = useState(false); // Controla si se muestra el <p>
+  //const [showSolution, setShowSolution] = useState(false); // Controla si se muestra el <p>
   
-  const TEST_LOCAL = false; // Cambiar a true para usar la solución local
-  const SOLUTION_LOCAL = [25,-55,50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
+  const TEST_LOCAL = true; // Cambiar a true para usar la solución local
+  //const SOLUTION_LOCAL = [25,-55,50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   const MIN_LENGHT = 4; //Longitud minima de la contraseña
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
@@ -46,7 +45,7 @@ const MainScreen = (props) => {
     } else {
       audio = document.getElementById("audio_failure");
       setLight("red");
-      reset();
+      //reset();
     }
     setTimeout(() => {
       setLight("off");
@@ -70,27 +69,27 @@ const MainScreen = (props) => {
     setChecking(false);
   };
   // ------------------
-  const  reset = () =>{
+  /*const  reset = () =>{
     //console.log("Solution: ", solutionArray);
     setIsReseting(true);
 
-    setTries(0);
+    //setTries(0);
     setTimeout(() => {      
       setIsReseting(false);
     }, 1000);
     setChecking(false);
-  }
+  }*/
 
   const checkLocalSolution = () => {
-    setChecking(true);
-    if(solutionArray.every((value, index) => value === SOLUTION_LOCAL[index])){
-      changeBoxLight(true, solutionArray);
+    //setChecking(true);
+    if(solution === PASSWORD_API){
+      changeBoxLight(true, solution);
     }else{
-      changeBoxLight(false, solutionArray);
+      changeBoxLight(false, solution);
     }
   }
 
-  const checkApiSolution = () => {
+  /*const checkApiSolution = () => {
     setChecking(true);
     if(solutionArray.every((value, index) => value === SOLUTION_LOCAL[index])){ //Para saber si es igual (Esto se haria en la api)
      props.escapp.checkPuzzle(props.config.escapp.puzzleId, PASSWORD_API, {}, (success) => {
@@ -100,14 +99,14 @@ const MainScreen = (props) => {
       props.escapp.checkPuzzle(props.config.escapp.puzzleId, "", {}, (success) => {
         changeBoxLight(success, PASSWORD_API);
     });}
-  } 
+  } */
 
 
-  useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
+  /*useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
     TEST_LOCAL ?  
-      tries >= SOLUTION_LOCAL.length ? checkLocalSolution() : setTries((tries) => tries + 1):
+      tries >= PASSWORD_API.length ? checkLocalSolution() : setTries((tries) => tries + 1):
       tries >= props.config.passwordLength ? checkApiSolution() : setTries((tries) => tries + 1);
-  }, [solutionArray]);
+  }, [solutionArray]);*/
 
 
   //  -----------------
@@ -137,18 +136,16 @@ const MainScreen = (props) => {
     const shortBeep = document.getElementById("audio_beep");
     shortBeep.pause();
     shortBeep.currentTime = 0;
-    shortBeep.play();
-   
+    shortBeep.play();   
 
     // Activa el cursor y reinicia el temporizador de 5 segundos
     setShowCursor(true);
-    setShowSolution(true); // Muestra el <p> con la solución
+    //setShowSolution(true); // Muestra el <p> con la solución
     if (timer) {
       clearTimeout(timer); // Limpia el temporizador anterior
     }
     const newTimer = setTimeout(() => {
-      //checkSolution(); // Comprueba la solución después de 5 segundos
-      
+      //checkSolution(); // Comprueba la solución después de 5 segundos      
       handleTimerExpire(); // Maneja la expiración del temporizador
       //console.log("checking solution...", solution);
     }, 5000);
@@ -162,22 +159,53 @@ const MainScreen = (props) => {
     setShowCursor(false); // Desactiva el cursor
     //console.log("Checking solution...", solution);
     setTimeout(() => {
-      setShowSolution(false); // Oculta el <p> después de 3 segundos
+      //setShowSolution(false); // Oculta el <p> después de 3 segundos
       setSolution(""); // Reinicia la solución
-      setChecking(false); // Reinicia el estado de checking
+      setChecking(false); // Reinicia el estado de checking //CAMBIARLO A CUANDO HAGA EL CHEQUEO CON LA API
       
     }, 3000); // Espera 3 segundos antes de ocultar el <p>
     
   };
 
   useEffect(() => {
-    if (solution.length > MIN_LENGHT) {
+    if (solution.length >= MIN_LENGHT) {
       console.log("Checking solution...", solution);
-      Number(solution)===PASSWORD_API && playVideo()
+      Number(solution)===PASSWORD_API ? rightChannel() : wrongChannel(); 
+    }else if(solution.length != 0 && solution.length < MIN_LENGHT){
+      console.log("Solution too short", solution);
+      wrongChannel();
     }
     
   }, [checking]); // Se ejecuta cada vez que cambia la solución*/
 
+
+  const wrongChannel = () => {
+    setPlayerOptions(mp4VideoOptions); // Guarda las opciones en el estado `playerOptions`  
+    if (playerRef.current) {
+      try{
+      playerRef.current.pause(); // Pausa el video actual
+      playerRef.current.src(mp4VideoOptions.sources); // Cambia la fuente del reproductor
+      playerRef.current.load(); // Carga el nuevo video
+      playerRef.current.play(); // Reproduce el nuevo video
+      }catch(e){
+        console.error("Error al cambiar la fuente del reproductor:", e);
+      }
+    }
+  }
+
+  const rightChannel = () => {
+    setPlayerOptions(youtubeVideoOptions); // Guarda las opciones en el estado `playerOptions`
+    if (playerRef.current) {
+      try{
+      playerRef.current.pause(); // Pausa el video actual
+      playerRef.current.src(youtubeVideoOptions.sources); // Cambia la fuente del reproductor
+      playerRef.current.load(); // Carga el nuevo video
+      playerRef.current.play(); // Reproduce el nuevo video
+      }catch(e){
+        console.error("Error al cambiar la fuente del reproductor:", e);
+      }
+    }
+  }
 
   // Opciones para el video MP4
   const mp4VideoOptions = {
@@ -198,12 +226,12 @@ const MainScreen = (props) => {
 
   // Opciones para el video de YouTube
   const youtubeVideoOptions = {
-    autoplay: true,
-    controls: false,
-    responsive: true,
-    loop: true,
-    fluid: true,
-    techOrder: ["youtube"],
+    //autoplay: true,
+    //controls: false,
+    //responsive: true,
+    //loop: true,
+    //fluid: true,
+    //techOrder: ["youtube"],
     sources: [
       {
         src: "https://youtu.be/dQw4w9WgXcQ?si=ReWN7oDLo1kUD1zR&t=42",//"https://www.youtube.com/watch?v=iYYRH4apXDo",
@@ -219,22 +247,12 @@ const MainScreen = (props) => {
 
   const handlePlayerReady = (player) => {
     playerRef.current = player;
-
-    // You can handle player events here, for example:
-    player.on('waiting', () => {
-      //videojs.log('player is waiting');
-      console.log("Waiting...", solution);
-    });
-
-    player.on('dispose', () => {
-      //videojs.log('player will dispose');
-    });
   };
 
   // Función para reproducir el video
-  const playVideo = () => {
+  /*const playVideo = () => {
     setIsYoutube((prev) => !prev);
-  };
+  };*/
 
   // Función para subir el volumen
   const increaseVolume = () => {
@@ -261,6 +279,11 @@ const MainScreen = (props) => {
         {props.show ? (         
          
           <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
+            {/** Luces de correcto o incorrecto*/}
+            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+            {/** Reproductor de video */}
             <div style={{width: boxWidth *0.77, position:"absolute",  marginLeft: "0.5%", marginTop: "18.6%"}}>
               <VideoJS  options={playerOptions}
                 onReady={handlePlayerReady}/>
@@ -300,10 +323,7 @@ const MainScreen = (props) => {
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
             <audio id="audio_beep" src="sounds/beep-short.mp3" autostart="false" preload="auto" />       
-            {/** Luces de correcto o incorrecto*/}
-            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+
             </div>
         ) : null
         }
