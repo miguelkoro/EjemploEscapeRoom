@@ -30,7 +30,7 @@ div.boxButton{
 
 p.channel{
 	font-size: 7vmin;
-	position: relative;
+	position: absolute;
 	color: rgb(15, 167, 15);
 	margin-top: 22%;
 	margin-left: 10%;
@@ -85,6 +85,34 @@ p.channel{
 	  opacity: 0;
 	}
   }
+
+p.volume{
+font-size: 7vmin;
+position: absolute;
+color: rgb(15, 167, 15);
+font-family: "Sixtyfour", sans-serif;
+font-optical-sizing: auto;
+//font-weight: 400;
+font-style: normal;
+font-variation-settings:
+	"BLED" 70,
+	"SCAN" 10;
+}
+
+div.volumeBar{
+	background-color: rgba(0, 0, 0, 0.623);
+	margin-left:25vmin;
+	width: 50vmin;
+	position:absolute;
+	height:5vmin;
+	//overflow:hidden;
+}
+
+div.volumeBarFilled{
+	background-color: rgba(15, 167, 15, 0.76);
+	position: absolute;
+	height: 100%;
+}
 
 div.boxlight {
 	position: absolute;

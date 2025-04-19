@@ -16,10 +16,11 @@ const MainScreen = (props) => {
   const [boxHeight, setBoxHeight] = useState(0);
 
   //
-  const [isYoutube, setIsYoutube] = useState(false); // Estado para alternar entre MP4 y YouTube
-  const playerRef = useRef(null); // Referencia al reproductor de Video.js (Removed duplicate declaration)
-
-
+  //const [isYoutube, setIsYoutube] = useState(false); // Estado para alternar entre MP4 y YouTube
+  const playerRef = useRef(null); // Referencia al reproductor de Video.js 
+  const [volume, setVolume] = useState(0.5); // Estado para el volumen (1 = 100%)
+  const [showVolume, setShowVolume] = useState(false); // Estado para mostrar/ocultar el volumen
+  const volumeTimeoutRef = useRef(null); // Referencia para almacenar el temporizador del volumen
 
   //const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
   //const [tries, setTries] = useState(0); // Contador de intentos
@@ -111,7 +112,7 @@ const MainScreen = (props) => {
 
   //  -----------------
   // Actualiza la fuente del reproductor cuando cambia `isYoutube`
-  useEffect(() => {
+  /*useEffect(() => {
   // Actualiza las opciones del reproductor según el estado `isYoutube`
   const newOptions = isYoutube ? youtubeVideoOptions : mp4VideoOptions;
   setPlayerOptions(newOptions); // Guarda las opciones en el estado `playerOptions`
@@ -126,7 +127,7 @@ const MainScreen = (props) => {
       console.error("Error al cambiar la fuente del reproductor:", e);
     }
   }
-  }, [isYoutube]);
+  }, [isYoutube]);*/
 
  
   const onClickButton = (value) => {
@@ -188,7 +189,11 @@ const MainScreen = (props) => {
       playerRef.current.pause(); // Pausa el video actual
       playerRef.current.src(mp4VideoOptions.sources); // Cambia la fuente del reproductor
       playerRef.current.load(); // Carga el nuevo video
+      playerRef.current.muted(false);
+      volume <= 0 ? playerRef.current.muted(true) : playerRef.current.volume(volume); // Establece el volumen
+      //playerRef.current.volume(volume)
       playerRef.current.play(); // Reproduce el nuevo video
+      
       }catch(e){
         console.error("Error al cambiar la fuente del reproductor:", e);
       }
@@ -203,7 +208,9 @@ const MainScreen = (props) => {
       playerRef.current.pause(); // Pausa el video actual
       playerRef.current.src(youtubeVideoOptions.sources); // Cambia la fuente del reproductor
       playerRef.current.load(); // Carga el nuevo video
+      playerRef.current.muted(false);
       playerRef.current.play(); // Reproduce el nuevo video
+      volume <= 0 ? playerRef.current.muted(true) : playerRef.current.volume(volume); // Establece el volumen
       }catch(e){
         console.error("Error al cambiar la fuente del reproductor:", e);
       }
@@ -216,7 +223,7 @@ const MainScreen = (props) => {
     controls: false,
     responsive: true,
     fluid: true,
-    muted: false,
+    //muted: false,
     loop: true,
     techOrder: ["html5", "youtube"],
     sources: [
@@ -229,15 +236,9 @@ const MainScreen = (props) => {
       click: false
     }
   };
-
+  const [playerOptions, setPlayerOptions] = useState(mp4VideoOptions); // Estado para las opciones del reproductor
   // Opciones para el video de YouTube
   const youtubeVideoOptions = {
-    //autoplay: true,
-    //controls: false,
-    //responsive: true,
-    //loop: true,
-    //fluid: true,
-    //techOrder: ["youtube"],
     sources: [
       {
         src: "https://youtu.be/dQw4w9WgXcQ?si=ReWN7oDLo1kUD1zR&t=42",//"https://www.youtube.com/watch?v=iYYRH4apXDo",
@@ -246,23 +247,60 @@ const MainScreen = (props) => {
     ]    
   };
 
-  const [playerOptions, setPlayerOptions] = useState(mp4VideoOptions); // Estado para las opciones del reproductor
+ 
 
-  const handlePlayerReady = (player) => {
+  /*const handlePlayerReady = (player) => {
     playerRef.current = player;
-  };
+  };*/
 
   // Función para reproducir el video
   /*const playVideo = () => {
     setIsYoutube((prev) => !prev);
   };*/
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.volume(volume); // Establece el volumen del reproductor
+    }
+  }, [volume]); // Se ejecuta cada vez que cambia el volumen
+    // Función para actualizar el volumen
+    /*const updateVolume = () => {
+      if (playerRef.current) {
+        setVolume(playerRef.current.volume()); // Actualiza el estado con el volumen actual
+      }
+    };*/
+
+  //Para limpiar el contador si se demsmonta el el componmente
+  useEffect(() => {
+    return () => {
+      if (volumeTimeoutRef.current) {
+        clearTimeout(volumeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const volumeAppear = () => {
+    // Cancela el temporizador anterior si existe
+  if (volumeTimeoutRef.current) {
+    clearTimeout(volumeTimeoutRef.current);
+  }  
+  setShowVolume(true);
+  // Inicia un nuevo temporizador y almacena su identificador
+  volumeTimeoutRef.current = setTimeout(() => {
+    setShowVolume(false); // Oculta el volumen después de 3 segundos
+    volumeTimeoutRef.current = null; // Limpia la referencia
+  }, 4000);
+  //console.log("Volume: ", volume);
+  }
 
   // Función para subir el volumen
   const increaseVolume = () => {
     if (playerRef.current) {
-      const currentVolume = playerRef.current.volume();
-      if (currentVolume < 1) {
-        playerRef.current.volume(Math.min(currentVolume + 0.1, 1)); // Incrementa el volumen en 0.1
+      //const currentVolume = playerRef.current.volume();
+      volumeAppear(); // Muestra el volumen
+      if (volume < 1) {
+        const newVolume = Math.min(volume + 0.1, 1); // Asegura que no exceda 1
+        setVolume(parseFloat(newVolume.toFixed(1))); // Redondea a 1 decimal
+        
       }
     }
   };
@@ -270,12 +308,15 @@ const MainScreen = (props) => {
   // Función para bajar el volumen
   const decreaseVolume = () => {
     if (playerRef.current) {
-      const currentVolume = playerRef.current.volume();
-      if (currentVolume > 0) {
-        playerRef.current.volume(Math.max(currentVolume - 0.1, 0)); // Reduce el volumen en 0.1
+      //const currentVolume = playerRef.current.volume();
+      volumeAppear(); // Muestra el volumen
+      if (volume > 0) {
+        const newVolume = Math.min(volume - 0.1, 1); // Asegura que no exceda 1
+        setVolume(parseFloat(newVolume.toFixed(1))); // Redondea a 1 decimal
       }
     }
   };
+
 
   return (
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }>
@@ -286,8 +327,7 @@ const MainScreen = (props) => {
             {/** Reproductor de video */}
             <div style={{width: boxWidth *0.77, position:"absolute",  marginLeft: "0.5%", marginTop: "18.6%"}}>
               <VideoJS  options={playerOptions}
-                onReady={handlePlayerReady}/>
-                
+                onReady={(player) => {playerRef.current = player;}}/>     
             </div>
             <img id="television" src={televisionImage} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute", left: 0, top: 0}}/>
              {/** Luces de correcto o incorrecto*/}
@@ -296,10 +336,17 @@ const MainScreen = (props) => {
             <div className="boxlight boxlight_green" style={{position: "absolute", display: light === "green" ? "block" : "none", marginLeft: "90%", marginTop: "17%" }} ></div> 
             {/** CANAL */}
             {solution && (<p className={`channel ${showCursor ? "show-cursor" : ""}`}>{solution}</p>)}
-            {/*<button  onClick={playVideo} style={{position: "absolute", top: "10px",left: "10px", zIndex: 10,padding: "10px 20px",
-              backgroundColor: "#007BFF", color: "#fff", border: "none",borderRadius: "5px", cursor: "pointer", }}>
-            {isYoutube ? "Reproducir MP4" : "Reproducir YouTube"}
-          </button>*/}
+            
+            {/* Indicador de volumen */}
+            {showVolume && (
+            <div style={{ position: "absolute", display:"flex", alignItems: 'center', marginLeft: "10%", marginTop: "55%"}}>
+              <p className='volume'>vol</p>
+              <div className='volumeBar'>
+                <div className='volumeBarFilled' style={{width: `${volume * 100}%`}}></div>
+              </div>
+            </div>
+            )}
+
             {/* Fila de botones */}
             <div id="row1" className="row" style={{ top: "42%"}}>
               <BoxButton value={"1"} position={1} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
