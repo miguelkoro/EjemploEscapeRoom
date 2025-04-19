@@ -186,13 +186,12 @@ const MainScreen = (props) => {
     setLight("red");
     if (playerRef.current) {
       try{
-      playerRef.current.pause(); // Pausa el video actual
-      playerRef.current.src(mp4VideoOptions.sources); // Cambia la fuente del reproductor
-      playerRef.current.load(); // Carga el nuevo video
-      playerRef.current.muted(false);
-      volume <= 0 ? playerRef.current.muted(true) : playerRef.current.volume(volume); // Establece el volumen
-      //playerRef.current.volume(volume)
-      playerRef.current.play(); // Reproduce el nuevo video
+        playerRef.current.pause(); // Pausa el video actual
+        playerRef.current.src(mp4VideoOptions.sources); // Cambia la fuente del reproductor
+        playerRef.current.load(); // Carga el nuevo video
+        handleVolume(); // Establece el volumen
+        //playerRef.current.volume(volume)
+        playerRef.current.play(); // Reproduce el nuevo video
       
       }catch(e){
         console.error("Error al cambiar la fuente del reproductor:", e);
@@ -205,16 +204,29 @@ const MainScreen = (props) => {
     setLight("green");
     if (playerRef.current) {
       try{
-      playerRef.current.pause(); // Pausa el video actual
-      playerRef.current.src(youtubeVideoOptions.sources); // Cambia la fuente del reproductor
-      playerRef.current.load(); // Carga el nuevo video
-      playerRef.current.muted(false);
-      playerRef.current.play(); // Reproduce el nuevo video
-      volume <= 0 ? playerRef.current.muted(true) : playerRef.current.volume(volume); // Establece el volumen
+        playerRef.current.pause(); // Pausa el video actual
+        playerRef.current.src(youtubeVideoOptions.sources); // Cambia la fuente del reproductor
+        playerRef.current.load(); // Carga el nuevo video
+        handleVolume(); // Establece el volumen
+        //playerRef.current.play(); // Reproduce el nuevo video
+
       }catch(e){
         console.error("Error al cambiar la fuente del reproductor:", e);
       }
     }
+  }
+
+  const handleVolume = () =>{
+    setTimeout(() => {
+      if (volume <= 0) {
+        playerRef.current.muted(true); // Silencia el video si el volumen es 0
+      } else {
+        playerRef.current.muted(false); // Asegúrate de que no esté silenciado
+        playerRef.current.volume(volume); // Establece el volumen al valor actual
+      }
+      playerRef.current.play(); // Reproduce el nuevo video
+    }, 100); // Espera un breve momento para que el reproductor inicialice la nueva fuente
+
   }
 
   // Opciones para el video MP4
@@ -297,10 +309,13 @@ const MainScreen = (props) => {
     if (playerRef.current) {
       //const currentVolume = playerRef.current.volume();
       volumeAppear(); // Muestra el volumen
-      if (volume < 1) {
+      if (playerRef.current.muted){
+        playerRef.current.muted(false); // Asegúrate de que no esté silenciado
         const newVolume = Math.min(volume + 0.1, 1); // Asegura que no exceda 1
         setVolume(parseFloat(newVolume.toFixed(1))); // Redondea a 1 decimal
-        
+      }else if (volume < 1) {
+        const newVolume = Math.min(volume + 0.1, 1); // Asegura que no exceda 1
+        setVolume(parseFloat(newVolume.toFixed(1))); // Redondea a 1 decimal
       }
     }
   };
@@ -311,6 +326,7 @@ const MainScreen = (props) => {
       //const currentVolume = playerRef.current.volume();
       volumeAppear(); // Muestra el volumen
       if (volume > 0) {
+        volume <= 0.1 && playerRef.current.muted(true); // Silencia el video si el volumen es 0.1
         const newVolume = Math.min(volume - 0.1, 1); // Asegura que no exceda 1
         setVolume(parseFloat(newVolume.toFixed(1))); // Redondea a 1 decimal
       }
