@@ -1,5 +1,5 @@
 div#screen_main {
-	background-image:url("../images/background_lock.png");// url("../images/background.jpg");
+	background-image:url("../images/telefono.png");// url("../images/background.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -10,7 +10,7 @@ div#screen_main {
 }
 //
 div#lock{
-	background-image: url("../images/lock.png");
+	background-image: url("../images/Telephone_dial.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -18,6 +18,18 @@ div#lock{
 }
 //
 
+div.pivote{
+	background-image: url("../images/telefono2.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	//width: 58vmin;
+	display: flex;
+	//height: 60vmin;
+	position: absolute;
+	top: 15%; // Centra verticalmente
+	left: 14%; // Centra horizontalmente
+}
 
 div.boxlight {
 	position: absolute;

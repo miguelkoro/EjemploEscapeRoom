@@ -16,7 +16,7 @@ const  SafeBoxDial = ( props ) => {
         const angleDifference = normalizeAngleDifference(rounded - startAngle);
        // Calcula la rotación acumulada y normalízala
         const newRotation = normalizeAngle(initialRotation + angleDifference);
-        const rotationDir = getRotationDirection(props.rotationAngle/6, newRotation/6);
+        const rotationDir = getRotationDirection(props.rotationAngle/2, newRotation/2);
         //Si se intenta girar en sentido contrario a la rotacion actual, no se hace nada
         if(rotationDirection === ''){
           setRotationDirection(rotationDir);
@@ -32,7 +32,7 @@ const  SafeBoxDial = ( props ) => {
         setIsMouseDown(false); // Indica que el mouse ya no está presionado
         //reset(); // Reinicia la rotación //Poniendolo aqui, hace efecto de teelfono de dial
         //Para poder poner -55 si va contrarreloj o 30 si va a favor
-        props.setSolutionArray((sol) => [...sol, (rotationDirection === "clockwise" ? props.rotationAngle/6 : -props.rotationAngle/6)]);
+        props.setSolutionArray((sol) => [...sol, (rotationDirection === "clockwise" ? props.rotationAngle/2 : -props.rotationAngle/2)]);
         setRotationDirection(''); //Reinicia la direccion de rotacion
     };
 
@@ -56,13 +56,13 @@ const  SafeBoxDial = ( props ) => {
         // Normaliza el ángulo para que esté entre 0° y 360°
         if (angle < 0) {
           angle += 360;}
-        return Math.round(angle / 6) * 6;
+        return Math.round(angle / 2) * 2;
       }
 
     function getRotationDirection(prev, curr) {
-        const diff = (curr - prev + 60) % 60;
+        const diff = (curr - prev + 120) % 120;
         if (diff === 0) return '';
-        return diff < 30 ? 'clockwise' : 'counter-clockwise';
+        return diff < 60 ? 'clockwise' : 'counter-clockwise';
     }
 
     const normalizeAngleDifference = (angle) => {
@@ -94,11 +94,13 @@ const  SafeBoxDial = ( props ) => {
           onMouseMove={handleMouseMove}>
           
             <div id="lock" style={{ 
-              width: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              height: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              marginLeft: props.boxWidth / 2 * 0.225,
-              position: "relative", // Posiciona el <div> absolutamente dentro del contenedor
-              top: "21%", // Centra verticalmente
+              width: Math.min(props.boxWidth, props.boxHeight) * 0.5, // Usa el menor valor para asegurar que sea cuadrado
+              height: Math.min(props.boxWidth, props.boxHeight) * 0.5, // Usa el menor valor para asegurar que sea cuadrado
+              //marginLeft: props.boxWidth / 2 * 0.225,
+              //marginBottom: props.boxHeight / 2 * 0.4,
+              position: "absolute", // Posiciona el <div> absolutamente dentro del contenedor
+              top: "12%", // Centra verticalmente
+              left: "21%", // Centra horizontalmente
               //marginTop: props.boxHeight / 2 * 0.6,
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
               pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
@@ -115,7 +117,11 @@ const  SafeBoxDial = ( props ) => {
                 userSelect: "none", // Evita que el texto sea seleccionable
                 fontStyle: "bold", // Aplica el estilo en negrita
                 fontSize : "13vmin", // Cambia el tamaño de la fuente
-              }}>{props.rotationAngle/6}</p>      
+              }}>{props.rotationAngle/2}</p>
+               <div className="pivote" style={{
+                width: Math.min(props.boxWidth, props.boxHeight) * 0.5, // Usa el menor valor para asegurar que sea cuadrado
+                height: Math.min(props.boxWidth, props.boxHeight) * 0.5,
+               }}></div>     
               <audio id="audio_wheel" src="sounds/spin.wav" autostart="false" preload="auto" />    
         </div>
     );
