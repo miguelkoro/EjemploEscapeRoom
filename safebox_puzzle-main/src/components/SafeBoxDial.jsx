@@ -85,37 +85,21 @@ const  SafeBoxDial = ( props ) => {
     return(
         <div className='lockContainer' style={{ width: props.boxWidth , height: props.boxHeight ,  
             width: Math.min(props.boxWidth, props.boxHeight) * 0.7, 
-            height: Math.min(props.boxWidth, props.boxHeight) * 0.7, 
-            alignItems: "center",
-            position: "relative",}}
-            onDragStart={(event) => event.preventDefault()
-          } onMouseUp={handleMouseUp} 
-          onMouseDown={handleMouseDown} 
-          onMouseMove={handleMouseMove}>
+            height: Math.min(props.boxWidth, props.boxHeight) * 0.7}}
+            onDragStart={(event) => event.preventDefault()} 
+            onMouseUp={handleMouseUp} 
+            onMouseDown={handleMouseDown} 
+            onMouseMove={handleMouseMove}>
           
             <div id="lock" style={{ 
               width: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
               height: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
               marginLeft: props.boxWidth / 2 * 0.225,
-              position: "relative", // Posiciona el <div> absolutamente dentro del contenedor
-              top: "21%", // Centra verticalmente
-              //marginTop: props.boxHeight / 2 * 0.6,
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
-              pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
               transition: props.isReseting ? "transform 1s ease" : "none", // Transición suave solo durante el reset
             }}></div>
             <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
-              style={{position: "absolute", // Posiciona el <p> absolutamente dentro del contenedor
-                top: "50%", // Centra verticalmente
-                left: "50%", // Centra horizontalmente
-                transform: "translate(-50%, -50%)", // Ajusta el centrado
-                margin: 0, // Elimina el margen del <p>
-                pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
-                color: "black", // Cambia el color del texto
-                userSelect: "none", // Evita que el texto sea seleccionable
-                fontStyle: "bold", // Aplica el estilo en negrita
-                fontSize : "13vmin", // Cambia el tamaño de la fuente
-              }}>{props.rotationAngle/6}</p>      
+              >{props.rotationAngle/6}</p>      
               <audio id="audio_wheel" src="sounds/spin.wav" autostart="false" preload="auto" />    
         </div>
     );

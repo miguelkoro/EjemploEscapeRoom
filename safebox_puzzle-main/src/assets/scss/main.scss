@@ -15,7 +15,28 @@ div#lock{
 	background-repeat: no-repeat;
 	background-size: contain;
 	display: flex;
+	position: relative;
+	pointer-events: none;
+	top: 21%;
 }
+
+p#rotationNum{
+	position: absolute;
+	top: 50%; // Centra verticalmente
+	left: 50%; // Centra horizontalmente
+	transform: translate(-50%, -50%); // Ajusta el centrado
+	margin: 0; // Elimina el margen del <p>
+	pointer-events: none; // Permite que los eventos del mouse pasen a través del <p>
+	color: black; // Cambia el color del texto
+	user-select: none; // Evita que el texto sea seleccionable
+	font-style: bold; // Aplica el estilo en negrita
+	font-size : 13vmin; // Cambia el tamaño de la fuente
+}
+
+//div.lockContainer{
+	//align-items: center;
+    //position: relative;
+//}
 //
 
 
