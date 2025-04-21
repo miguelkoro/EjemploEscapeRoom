@@ -7,6 +7,8 @@ const  SafeBoxDial = ( props ) => {
   const [startAngle, setStartAngle] = useState(0); // Ángulo inicial del ratón
   const [rotationDirection, setRotationDirection] = useState(""); // Dirección de rotación
 
+  const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
+
 
   const handleMouseMove = (event) => {
       if (!isMouseDown || props.checking) return ; // Solo ejecuta si el mouse está presionado    
@@ -40,7 +42,7 @@ const  SafeBoxDial = ( props ) => {
       //props.setSolutionArray((sol) => [...sol, (rotationDirection === "clockwise" ? props.rotationAngle/6 : -props.rotationAngle/6)]);
       //setRotationDirection(''); //Reinicia la direccion de rotacion
       if(props.rotationAngle>0){
-        props.setIsReseting(true);
+        setIsReseting(true);
         
         audio.play();
         getNumber(props.rotationAngle)
@@ -104,14 +106,14 @@ const  SafeBoxDial = ( props ) => {
       props.setRotationAngle(0); // Reinicia el ángulo de rotación
       //setRotationDirection("");
       setTimeout(() => {      
-        props.setIsReseting(false);
+        setIsReseting(false);
       }, 1300);
   }
 
   useEffect(() => {    
-      if (props.isReseting) { 
+      if (isReseting) { 
           reset(); // Reinicia el lock
-      }}, [props.isReseting]); // Se ejecuta cuando isReseting cambia
+      }}, [isReseting]); // Se ejecuta cuando isReseting cambia
 
     return(
         <div className='lockContainer' style={{// width: props.boxWidth , height: props.boxHeight ,  
@@ -135,7 +137,7 @@ const  SafeBoxDial = ( props ) => {
               //marginTop: props.boxHeight / 2 * 0.6,
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
               pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
-              transition: props.isReseting ? "transform 1.3s ease" : "none", // Transición suave solo durante el reset
+              transition: isReseting ? "transform 1.3s ease" : "none", // Transición suave solo durante el reset
             }}></div>
             {/*<p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
               style={{position: "absolute", // Posiciona el <p> absolutamente dentro del contenedor

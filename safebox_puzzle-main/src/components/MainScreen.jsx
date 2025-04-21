@@ -10,15 +10,14 @@ const MainScreen = (props) => {
 
   //
   const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
-  const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
-  const [tries, setTries] = useState(0); // Contador de intentos
+
   const [password, setPassword] = useState(""); // Contraseña introducida por el usuario
 
 
-  const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
+
   
   const TEST_LOCAL = true; // Cambiar a true para usar la solución local
-  const SOLUTION_LOCAL = [25, -55, 50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
+  //const SOLUTION_LOCAL = [25, -55, 50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
@@ -36,7 +35,8 @@ const MainScreen = (props) => {
     setTimeout(() => {
       setLight("off");
       !TEST_LOCAL && afterChangeBoxLight(success, solution);
-    }, 1000);
+      TEST_LOCAL && setChecking(false);
+    }, 3000);
     audio.play();
   }
 
@@ -56,29 +56,21 @@ const MainScreen = (props) => {
   };
   // ------------------
   const  reset = () =>{
-    //console.log("Solution: ", solutionArray);
-    setIsReseting(true);
-    setRotationAngle(0); // Reinicia el ángulo de rotación
-    setSolutionArray([]);
-    setTries(0);
-    setTimeout(() => {      
-      setIsReseting(false);
-    }, 1000);
-    setChecking(false);
+    setPassword("");
   }
 
   const checkLocalSolution = () => {
     setChecking(true);
-    if(solutionArray.every((value, index) => value === SOLUTION_LOCAL[index])){
-      console.log("Correct solution: ", solutionArray);
-      changeBoxLight(true, solutionArray);
+    if(Number(password) === PASSWORD_API){
+      console.log("Correct solution: ", password);
+      changeBoxLight(true, password);
     }else{
-      changeBoxLight(false, solutionArray);
+      changeBoxLight(false, password);
     }
   }
 
   const checkApiSolution = () => {
-    setChecking(true);
+    /*setChecking(true);
     if(solutionArray.every((value, index) => value === SOLUTION_LOCAL[index])){ //Para saber si es igual (Esto se haria en la api)
      props.escapp.checkPuzzle(props.config.escapp.puzzleId, PASSWORD_API, {}, (success) => {
       changeBoxLight(success, PASSWORD_API);
@@ -86,19 +78,22 @@ const MainScreen = (props) => {
     }else{
       props.escapp.checkPuzzle(props.config.escapp.puzzleId, "", {}, (success) => {
         changeBoxLight(success, PASSWORD_API);
-    });}
+    });}*/
   } 
 
 
-  useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
+  /*useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
     TEST_LOCAL ?  
       tries >= SOLUTION_LOCAL.length ? checkLocalSolution() : setTries((tries) => tries + 1):
       tries >= props.config.passwordLength ? checkApiSolution() : setTries((tries) => tries + 1);
       console.log("Tries: ", tries, "Solution: ", solutionArray);
-  }, [solutionArray]);
+  }, [solutionArray]);*/
 
   useEffect(() => {
     console.log("Password: ", password);
+    TEST_LOCAL ?
+      password.length >= String(PASSWORD_API).length && checkLocalSolution() :
+      password.length >= props.config.passwordLength && checkApiSolution();
   }, [password]);
 
 
@@ -109,7 +104,6 @@ const MainScreen = (props) => {
             <SafeBoxDial
               boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
-              isReseting={isReseting} setIsReseting={setIsReseting}
               setPassword={setPassword}/>
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/fail_call.wav" autostart="false" preload="auto" />
