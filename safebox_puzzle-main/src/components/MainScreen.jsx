@@ -105,7 +105,7 @@ const MainScreen = (props) => {
             <SafeBoxDial
               boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
-              setSolutionArray={setSolutionArray} isReseting={isReseting}/>
+              setSolutionArray={setSolutionArray} isReseting={isReseting} setIsReseting={setIsReseting}/>
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
