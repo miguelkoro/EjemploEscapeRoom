@@ -12,12 +12,13 @@ const MainScreen = (props) => {
   const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
   const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
   const [tries, setTries] = useState(0); // Contador de intentos
+  const [password, setPassword] = useState(""); // Contraseña introducida por el usuario
 
 
   const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
   
   const TEST_LOCAL = true; // Cambiar a true para usar la solución local
-  const SOLUTION_LOCAL = [25,-55,50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
+  const SOLUTION_LOCAL = [25, -55, 50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
@@ -96,6 +97,9 @@ const MainScreen = (props) => {
       console.log("Tries: ", tries, "Solution: ", solutionArray);
   }, [solutionArray]);
 
+  useEffect(() => {
+    console.log("Password: ", password);
+  }, [password]);
 
 
   return (
@@ -105,15 +109,16 @@ const MainScreen = (props) => {
             <SafeBoxDial
               boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
-              setSolutionArray={setSolutionArray} isReseting={isReseting} setIsReseting={setIsReseting}/>
+              isReseting={isReseting} setIsReseting={setIsReseting}
+              setPassword={setPassword}/>
             {/*Audios*/}
-            <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
+            <audio id="audio_failure" src="sounds/fail_call.wav" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
                    
             {/** Luces de correcto o incorrecto*/}
-            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", position:"absolute", top:"25%",  left:"41%"}} ></div> 
+            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", position:"absolute", top:"25%",  left:"41%"}} ></div> 
+            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", position:"absolute", top:"25%", left:"41%"}} ></div> 
         </div>) : null}
     </div>);
 };

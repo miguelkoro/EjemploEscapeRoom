@@ -34,31 +34,33 @@ const  SafeBoxDial = ( props ) => {
   const handleMouseUp = () => {
       if (props.checking) return ;
       setIsMouseDown(false); // Indica que el mouse ya no está presionado
+      let audio  = document.getElementById("audio_return");
       //reset(); // Reinicia la rotación //Poniendolo aqui, hace efecto de teelfono de dial
       //Para poder poner -55 si va contrarreloj o 30 si va a favor
       //props.setSolutionArray((sol) => [...sol, (rotationDirection === "clockwise" ? props.rotationAngle/6 : -props.rotationAngle/6)]);
       //setRotationDirection(''); //Reinicia la direccion de rotacion
       if(props.rotationAngle>0){
         props.setIsReseting(true);
-        let audio  = document.getElementById("audio_return");
+        
         audio.play();
         getNumber(props.rotationAngle)
       }
   };
 
   const getNumber = (angle) => {
-    if(angle >0 && angle <= 60)console.log("nada");
-    else if(angle > 60 && angle <= 96)console.log("1");
-    else if(angle > 96 && angle <= 120)console.log("2");
-    else if(angle > 120 && angle <= 156)console.log("3");
-    else if(angle > 156 && angle <= 180)console.log("4");
-    else if(angle > 180 && angle <= 210)console.log("5");
-    else if(angle > 210 && angle <= 240)console.log("6");
-    else if(angle > 240 && angle <= 270)console.log("7");
-    else if(angle > 270 && angle <= 294)console.log("8");
-    else if(angle > 294 && angle <= 326)console.log("9");
-    else if(angle > 326)console.log("0");
-    
+    //if(angle >0 && angle <= 60)console.log("nada");
+    let number=""
+    if(angle > 60 && angle <= 96)number="1";
+    else if(angle > 96 && angle <= 120)number="2";
+    else if(angle > 120 && angle <= 156)number="3";
+    else if(angle > 156 && angle <= 180)number="4";
+    else if(angle > 180 && angle <= 210)number="5";
+    else if(angle > 210 && angle <= 240)number="6";
+    else if(angle > 240 && angle <= 270)number="7";
+    else if(angle > 270 && angle <= 294)number="8";
+    else if(angle > 294 && angle <= 326)number="9";
+    else if(angle > 326)number="0";
+    props.setPassword((prevPassword) => prevPassword + number); // Concatena el número al estado `password`
   }
 
   const handleMouseDown = (event) => {
@@ -112,7 +114,7 @@ const  SafeBoxDial = ( props ) => {
       }}, [props.isReseting]); // Se ejecuta cuando isReseting cambia
 
     return(
-        <div className='lockContainer' style={{ width: props.boxWidth , height: props.boxHeight ,  
+        <div className='lockContainer' style={{// width: props.boxWidth , height: props.boxHeight ,  
             width: Math.min(props.boxWidth, props.boxHeight) * 0.7, 
             height: Math.min(props.boxWidth, props.boxHeight) * 0.7, 
             alignItems: "center",
@@ -135,7 +137,7 @@ const  SafeBoxDial = ( props ) => {
               pointerEvents: "none", // Permite que los eventos del mouse pasen a través del <p>
               transition: props.isReseting ? "transform 1.3s ease" : "none", // Transición suave solo durante el reset
             }}></div>
-            <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
+            {/*<p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
               style={{position: "absolute", // Posiciona el <p> absolutamente dentro del contenedor
                 top: "50%", // Centra verticalmente
                 left: "50%", // Centra horizontalmente
@@ -146,7 +148,7 @@ const  SafeBoxDial = ( props ) => {
                 userSelect: "none", // Evita que el texto sea seleccionable
                 fontStyle: "bold", // Aplica el estilo en negrita
                 fontSize : "13vmin", // Cambia el tamaño de la fuente
-              }}>{props.rotationAngle/2}</p>
+              }}>{props.rotationAngle/2}</p>*/}
                <div className="pivote" style={{
                 width: Math.min(props.boxWidth, props.boxHeight) * 0.5, // Usa el menor valor para asegurar que sea cuadrado
                 height: Math.min(props.boxWidth, props.boxHeight) * 0.5,
