@@ -100,7 +100,7 @@ const MainScreen = (props) => {
   return (
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}>
         {props.show ? (
-          <div>
+          <div style={{position:"absolute"}}>
             <SafeBoxDial
               boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
@@ -110,9 +110,9 @@ const MainScreen = (props) => {
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
                    
             {/** Luces de correcto o incorrecto*/}
-            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", position:"absolute", top:"25%",  left:"41%"}} ></div> 
-            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", position:"absolute", top:"25%",  left:"41%"}} ></div> 
-            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", position:"absolute", top:"25%", left:"41%"}} ></div> 
+            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", top:"17%",  left:"16%"}} ></div> 
+            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", ptop:"17%",  left:"16%"}} ></div> 
+            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none",  top:"17%", left:"16%"}} ></div> 
         </div>) : null}
     </div>);
 };
