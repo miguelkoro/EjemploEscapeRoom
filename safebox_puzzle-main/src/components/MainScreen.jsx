@@ -111,7 +111,7 @@ const MainScreen = (props) => {
                    
             {/** Luces de correcto o incorrecto*/}
             <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", top:"17%",  left:"16%"}} ></div> 
-            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", ptop:"17%",  left:"16%"}} ></div> 
+            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", top:"17%",  left:"16%"}} ></div> 
             <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none",  top:"17%", left:"16%"}} ></div> 
         </div>) : null}
     </div>);
