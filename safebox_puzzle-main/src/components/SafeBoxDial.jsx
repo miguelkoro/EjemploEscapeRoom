@@ -9,7 +9,7 @@ const  SafeBoxDial = ( props ) => {
 
 
     const handleMouseMove = (event) => {
-        if (!isMouseDown || props.checking) return ; // Solo ejecuta si el mouse está presionado    
+        if (!isMouseDown || props.checking || props.isReseting) return ; // Solo ejecuta si el mouse está presionado    
         let audio  = document.getElementById("audio_wheel");
         let rounded = calculateAngle(event); // Calcula el ángulo 
        // Calcula la diferencia de ángulos de forma cíclica
@@ -28,7 +28,7 @@ const  SafeBoxDial = ( props ) => {
     };
 
     const handleMouseUp = () => {
-        if (props.checking) return ;
+        if (props.checking || props.isReseting) return ;
         setIsMouseDown(false); // Indica que el mouse ya no está presionado
         //reset(); // Reinicia la rotación //Poniendolo aqui, hace efecto de teelfono de dial
         //Para poder poner -55 si va contrarreloj o 30 si va a favor
@@ -37,7 +37,7 @@ const  SafeBoxDial = ( props ) => {
     };
 
     const handleMouseDown = (event) => {
-        if (props.checking) return ;
+        if (props.checking || props.isReseting) return ;
         setIsMouseDown(true); // Indica que el mouse está presionado    
         let rounded = calculateAngle(event); // Calcula el ángulo inicial
         setStartAngle(rounded);     // Guarda el ángulo inicial y el ángulo actual del lock
@@ -96,7 +96,7 @@ const  SafeBoxDial = ( props ) => {
               height: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
               marginLeft: props.boxWidth / 2 * 0.225,
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
-              transition: props.isReseting ? "transform 1s ease" : "none", // Transición suave solo durante el reset
+              transition: props.isReseting ? "transform 2.5s ease" : "none", // Transición suave solo durante el reset
             }}></div>
             <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
               >{props.rotationAngle/6}</p>      

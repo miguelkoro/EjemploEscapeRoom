@@ -62,7 +62,7 @@ const MainScreen = (props) => {
     setTries(0);
     setTimeout(() => {      
       setIsReseting(false);
-    }, 1000);
+    }, 2500);
     setChecking(false);
   }
 
