@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './../assets/scss/main.scss';
 import SafeBoxDial from './SafeBoxDial';
+import Ray from './Ray';
 
 const MainScreen = (props) => {
   const [checking, setChecking] = useState(false);
@@ -12,6 +13,10 @@ const MainScreen = (props) => {
   const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
   const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
   const [tries, setTries] = useState(0); // Contador de intentos
+
+  const [frequency, setFrequency] = useState(2);
+  const [amplitude, setAmplitude] = useState(50);
+  const [wavelength, setWavelength] = useState(90);
 
 
   const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
@@ -96,7 +101,13 @@ const MainScreen = (props) => {
       console.log("Tries: ", tries, "Solution: ", solutionArray);
   }, [solutionArray]);
 
-
+  const draw = (context) => {
+    context.fillStyle = "rgb(200, 0, 0)";
+    context.fillRect(10, 10, 50, 50);
+  
+    context.fillStyle = "rgba(0, 0, 200, 0.5)";
+    context.fillRect(30, 30, 50, 50);
+  };
 
   return (
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}>
@@ -106,6 +117,7 @@ const MainScreen = (props) => {
               boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
               setSolutionArray={setSolutionArray} isReseting={isReseting}/>
+            <Ray draw={draw} boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} frequency={frequency} amplitude={amplitude} wavelength={wavelength}/>
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
