@@ -11,13 +11,13 @@ const MainScreen = (props) => {
   const [boxHeight, setBoxHeight] = useState(0);
 
   //
-  const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
+  //const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
 
   const dialSpacing = boxWidth * 0.19; // Espaciado horizontal entre los diales
   const initialPosition = props.appwidth / 2 + boxWidth / 2  * -0.4; // Posición inicial del primer dial desde la derecha
 
   const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
-  const [tries, setTries] = useState(0); // Contador de intentos
+  //const [tries, setTries] = useState(0); // Contador de intentos
 
   const [frequency, setFrequency] = useState(0);
   const [wavelength, setWavelength] = useState(0);
@@ -36,7 +36,7 @@ const MainScreen = (props) => {
   const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
   
   const TEST_LOCAL = true; // Cambiar a true para usar la solución local
-  const SOLUTION_LOCAL = [25,-55,50, -15, 30]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
+  const SOLUTION_LOCAL = [14,8,109]; //La solucion que queremos, 25 derecha, 55 izq, 50 derecha...
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
@@ -76,9 +76,13 @@ const MainScreen = (props) => {
   const  reset = () =>{
     //console.log("Solution: ", solutionArray);
     setIsReseting(true);
-    setRotationAngle(0); // Reinicia el ángulo de rotación
+    //setRotationAngle(0); // Reinicia el ángulo de rotación
+    setAmplitude(0); // Reinicia la amplitud
+    setFrequency(0); // Reinicia la frecuencia
+    setWavelength(0); // Reinicia la longitud de onda
+    
     setSolutionArray([]);
-    setTries(0);
+    //setTries(0);
     setTimeout(() => {      
       setIsReseting(false);
     }, 2500);
@@ -108,7 +112,9 @@ const MainScreen = (props) => {
   } 
 
   const checkSolution = () => {
-    console.log("Solution: ", solutionArray);
+    setSolutionArray(() => [ frequency/3, wavelength/3, amplitude/3]); // Añade la solución al array
+    
+
   }
 
 
@@ -117,6 +123,10 @@ const MainScreen = (props) => {
       tries >= SOLUTION_LOCAL.length ? checkLocalSolution() : setTries((tries) => tries + 1):
       tries >= props.config.passwordLength ? checkApiSolution() : setTries((tries) => tries + 1);
       console.log("Tries: ", tries, "Solution: ", solutionArray);*/
+      if(solutionArray.length === 0) return; // Si no hay solución, no hace nada
+      console.log("Solution: ", solutionArray);
+      TEST_LOCAL ? checkLocalSolution() : checkApiSolution();
+      
   }, [solutionArray]);
 
 
