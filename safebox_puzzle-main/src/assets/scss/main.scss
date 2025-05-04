@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 div#screen_main {
 	background-image:url("../images/osciloscopio.png");// url("../images/background.jpg");
 	background-position: center;
@@ -30,9 +32,31 @@ p#rotationNum{
 	color: black; // Cambia el color del texto
 	user-select: none; // Evita que el texto sea seleccionable
 	font-style: bold; // Aplica el estilo en negrita
-
-	font-size : 13vmin; // Cambia el tamaño de la fuente
+	font-family: "Anton", sans-serif;
+	font-size : 4vmin; // Cambia el tamaño de la fuente
 }
+
+
+.data-show-container {
+	display: flex; /* Usamos Flexbox */
+	justify-content: space-between; /* Espaciado uniforme entre columnas */
+	align-items: center; /* Alinea verticalmente los elementos */
+	width: 100%; /* Asegura que ocupe todo el ancho disponible */
+	margin-top: 75%; /* Espaciado superior opcional */
+	margin-left: -35%;
+	grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
+	gap: 30%;
+  }
+  
+  .data-show {
+	flex: 1; /* Cada columna ocupa el mismo espacio */
+	text-align: center; /* Centra el texto dentro de cada columna */
+	font-size: 2.8vmin; // Cambia el tamaño de la fuente
+	color: rgb(171, 255, 155);
+	font-style: bold; // Aplica el estilo en negrita
+	font-family: "Press Start 2P", system-ui;
+	width: 9vmin;
+  }
 
 //div.lockContainer{
 	//align-items: center;
@@ -63,6 +87,10 @@ div.boxButton{
 	/*display: flex;*/
 	/*position: relative;*/
 	//top: 21%;
+}
+
+div.boxButton:active {
+	transform: scale(0.9);
 }
 
 div.boxlight.boxlight_off {

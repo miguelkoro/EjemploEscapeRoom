@@ -23,6 +23,7 @@ const  Dial = ( props ) => {
         }else if(rotationDirection !== rotationDir){
           return;}*/
         //if(props.rotationAngle === newRotation)return; // No actualiza si el ángulo no ha cambiado
+        if(props.rotationAngle === newRotation) return; // No actualiza si el ángulo no ha cambiado
         props.setRotationAngle(newRotation);     // Actualiza el ángulo de rotación
         audio.play();
     };
@@ -108,9 +109,12 @@ const  Dial = ( props ) => {
               
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
               transition: props.isReseting ? "transform 2.5s ease" : "none", // Transición suave solo durante el reset
-            }}></div>
-            <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
-              >{Math.round(props.rotationAngle/3)}</p>      
+            }}>
+              <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
+              >{props.name}</p>
+            </div>
+            {/*<p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
+              >{Math.round(props.rotationAngle/3)}</p>      */}
               <audio id="audio_wheel" src="sounds/spin.wav" autostart="false" preload="auto" />    
         </div>
     );

@@ -126,18 +126,27 @@ const MainScreen = (props) => {
           <div>
             <Dial id={"dial-frequency"} boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={frequency} setRotationAngle={setFrequency} isReseting={isReseting}
-              xPosition={initialPosition + dialSpacing * 2}/>
+              xPosition={initialPosition + dialSpacing * 2} name={"F"}/>
             <Dial id={"dial-wavelength"}  boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={wavelength} setRotationAngle={setWavelength} isReseting={isReseting} 
-              xPosition={initialPosition + dialSpacing}/>
+              xPosition={initialPosition + dialSpacing} name={"W"}/>
             <Dial id={"dial-amplitude"}  boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={amplitude} setRotationAngle={setAmplitude} isReseting={isReseting}
-              xPosition={initialPosition}/>
+              xPosition={initialPosition} name={"A"}/>
             <Ray boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} 
               frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>
             <BoxButton value={0} position={initialPosition - dialSpacing} boxWidth={boxWidth} 
               boxHeight={boxHeight} onClick={checkSolution} appwidth={props.appwidth}  appheight={props.appheight}/>
 
+            {/*<p>F: {frequencyMapped.toFixed(2)}</p>
+            <p>W: {wavelengthMapped.toFixed(2)}</p>
+            <p>A: {amplitudeMapped.toFixed(2)}</p>*/}
+            <div className="data-show-container" >
+              <p className='data-show'style={{transform: "rotate(6deg)"}}>F:{frequency/3}</p>
+              <p className='data-show' style={{marginTop: "20%"}}>W:{wavelength/3}</p>
+              <p className='data-show' style={{transform: "rotate(-6deg)"}}>A:{amplitude/3}</p>
+            </div>
+            
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
