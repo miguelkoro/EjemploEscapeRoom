@@ -1,5 +1,5 @@
 div#screen_main {
-	background-image:url("../images/background_lock.png");// url("../images/background.jpg");
+	background-image:url("../images/osciloscopio.png");// url("../images/background.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -9,15 +9,15 @@ div#screen_main {
 	justify-content: center;
 }
 //
-div#lock{
-	background-image: url("../images/lock.png");
+div.dial{
+	background-image: url("../images/dial.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
 	display: flex;
 	position: relative;
 	pointer-events: none;
-	top: 21%;
+	//top: 21%;
 }
 
 p#rotationNum{
@@ -30,6 +30,7 @@ p#rotationNum{
 	color: black; // Cambia el color del texto
 	user-select: none; // Evita que el texto sea seleccionable
 	font-style: bold; // Aplica el estilo en negrita
+
 	font-size : 13vmin; // Cambia el tamaño de la fuente
 }
 

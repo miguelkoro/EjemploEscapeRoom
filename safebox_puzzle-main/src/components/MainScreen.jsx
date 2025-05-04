@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './../assets/scss/main.scss';
-import SafeBoxDial from './SafeBoxDial';
+import Dial from './Dial';
 import Ray from './Ray';
 
 const MainScreen = (props) => {
@@ -11,12 +11,24 @@ const MainScreen = (props) => {
 
   //
   const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
+
+
+
   const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
   const [tries, setTries] = useState(0); // Contador de intentos
 
-  const [frequency, setFrequency] = useState(2);
-  const [amplitude, setAmplitude] = useState(50);
-  const [wavelength, setWavelength] = useState(90);
+  const [frequency, setFrequency] = useState(0);
+  const [wavelength, setWavelength] = useState(0);
+  const [amplitude, setAmplitude] = useState(0);
+ 
+
+  const mapRange = (value, min1, max1, min2, max2) => {
+    return min2 + ((value - min1) * (max2 - min2)) / (max1 - min1);
+  };
+  // 0 a 120 son los valoreas que devuelven los diales, el resto son los rangos de valores que estoy dispuesto a poner
+  const frequencyMapped = mapRange(frequency/3, 0, 120, 0.4, 1); // Frecuencia entre 0.6 y 4.2
+  const wavelengthMapped = mapRange(wavelength/3, 0, 120, 10, 100); // Wavelength entre 10 y 100
+  const amplitudeMapped = mapRange(amplitude/3, 0, 120, 25, 100); // Amplitud entre 25 y 250
 
 
   const [solutionArray, setSolutionArray] = useState([]); // Array para guardar la solución
@@ -95,29 +107,30 @@ const MainScreen = (props) => {
 
 
   useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
-    TEST_LOCAL ?  
+    /*TEST_LOCAL ?  
       tries >= SOLUTION_LOCAL.length ? checkLocalSolution() : setTries((tries) => tries + 1):
       tries >= props.config.passwordLength ? checkApiSolution() : setTries((tries) => tries + 1);
-      console.log("Tries: ", tries, "Solution: ", solutionArray);
+      console.log("Tries: ", tries, "Solution: ", solutionArray);*/
   }, [solutionArray]);
 
-  const draw = (context) => {
-    context.fillStyle = "rgb(200, 0, 0)";
-    context.fillRect(10, 10, 50, 50);
-  
-    context.fillStyle = "rgba(0, 0, 200, 0.5)";
-    context.fillRect(30, 30, 50, 50);
-  };
 
   return (
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}>
         {props.show ? (
           <div>
-            <SafeBoxDial
-              boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
-              rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
-              setSolutionArray={setSolutionArray} isReseting={isReseting}/>
-            <Ray draw={draw} boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} frequency={frequency} amplitude={amplitude} wavelength={wavelength}/>
+            <Dial id={"dial-frequency"} boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
+              rotationAngle={frequency} setRotationAngle={setFrequency}
+              setSolutionArray={setSolutionArray} isReseting={isReseting}
+              xPosition={"57%"}/>
+            <Dial id={"dial-wavelength"}  boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
+              rotationAngle={wavelength} setRotationAngle={setWavelength}
+              setSolutionArray={setSolutionArray} isReseting={isReseting}
+              xPosition={"48%"}/>
+            <Dial id={"dial-amplitude"}  boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
+              rotationAngle={amplitude} setRotationAngle={setAmplitude}
+              setSolutionArray={setSolutionArray} isReseting={isReseting}
+              xPosition={"39%"}/>
+            <Ray  boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />

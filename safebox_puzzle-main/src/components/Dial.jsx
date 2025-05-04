@@ -1,7 +1,7 @@
 import './../assets/scss/main.scss';
 import React, { useState, useEffect } from 'react';
 
-const  SafeBoxDial = ( props ) => {
+const  Dial = ( props ) => {
     const [initialRotation, setInitialRotation] = useState(0); // Ángulo inicial del lock
     const [isMouseDown, setIsMouseDown] = useState(false); // Estado para saber si el mouse está presionado
     const [startAngle, setStartAngle] = useState(0); // Ángulo inicial del ratón
@@ -16,13 +16,13 @@ const  SafeBoxDial = ( props ) => {
         const angleDifference = normalizeAngleDifference(rounded - startAngle);
        // Calcula la rotación acumulada y normalízala
         const newRotation = normalizeAngle(initialRotation + angleDifference);
-        const rotationDir = getRotationDirection(props.rotationAngle/6, newRotation/6);
+        //const rotationDir = getRotationDirection(props.rotationAngle/6, newRotation/6);
         //Si se intenta girar en sentido contrario a la rotacion actual, no se hace nada
-        if(rotationDirection === ''){
+        /*if(rotationDirection === ''){
           setRotationDirection(rotationDir);
         }else if(rotationDirection !== rotationDir){
-          return;}
-        if(props.rotationAngle === newRotation)return; // No actualiza si el ángulo no ha cambiado
+          return;}*/
+        //if(props.rotationAngle === newRotation)return; // No actualiza si el ángulo no ha cambiado
         props.setRotationAngle(newRotation);     // Actualiza el ángulo de rotación
         audio.play();
     };
@@ -32,8 +32,8 @@ const  SafeBoxDial = ( props ) => {
         setIsMouseDown(false); // Indica que el mouse ya no está presionado
         //reset(); // Reinicia la rotación //Poniendolo aqui, hace efecto de teelfono de dial
         //Para poder poner -55 si va contrarreloj o 30 si va a favor
-        props.setSolutionArray((sol) => [...sol, (rotationDirection === "clockwise" ? props.rotationAngle/6 : -props.rotationAngle/6)]);
-        setRotationDirection(''); //Reinicia la direccion de rotacion
+       // props.setSolutionArray((sol) => [...sol,props.rotationAngle/3]);
+        //setRotationDirection(''); //Reinicia la direccion de rotacion
     };
 
     const handleMouseDown = (event) => {
@@ -42,10 +42,11 @@ const  SafeBoxDial = ( props ) => {
         let rounded = calculateAngle(event); // Calcula el ángulo inicial
         setStartAngle(rounded);     // Guarda el ángulo inicial y el ángulo actual del lock
         setInitialRotation(props.rotationAngle); // Guarda el ángulo actual del lock    
+        //console.log(props.xPosition);
       };
 
     const calculateAngle = (event) => {
-        const lockElement = document.getElementById("lock");
+        const lockElement = document.getElementById(props.id); // Obtiene el elemento del lock
         const rect = lockElement.getBoundingClientRect();  
         // Calcula el centro del div
         const centerX = rect.left + rect.width / 2;
@@ -56,14 +57,14 @@ const  SafeBoxDial = ( props ) => {
         // Normaliza el ángulo para que esté entre 0° y 360°
         if (angle < 0) {
           angle += 360;}
-        return Math.round(angle / 6) * 6;
+        return Math.round(angle / 3) * 3; 
       }
 
-    function getRotationDirection(prev, curr) {
+    /*function getRotationDirection(prev, curr) {
         const diff = (curr - prev + 60) % 60;
         if (diff === 0) return '';
         return diff < 30 ? 'clockwise' : 'counter-clockwise';
-    }
+    }*/
 
     const normalizeAngleDifference = (angle) => {
         return ((angle + 180) % 360) - 180;
@@ -83,26 +84,36 @@ const  SafeBoxDial = ( props ) => {
         }}, [props.isReseting]); // Se ejecuta cuando isReseting cambia
 
     return(
-        <div className='lockContainer' style={{ width: props.boxWidth , height: props.boxHeight ,  
-            width: Math.min(props.boxWidth, props.boxHeight) * 0.7, 
-            height: Math.min(props.boxWidth, props.boxHeight) * 0.7}}
+        <div className='lockContainer' style={{  
+            width: Math.min(props.boxWidth, props.boxHeight) * 0.24, 
+            height: Math.min(props.boxWidth, props.boxHeight) * 0.24,
+            //right: props.boxWidth / 2 * 0.2,
+            //transform: "translate(-50%, -50%)",
+            //top: props.boxHeight * 0.33,
+            //left: props.appwidth / 2 + props.boxWidth / 2 * 0.1,
+            right: props.xPosition,
+            top: "70%",
+            
+            cursor: "pointer",
+            position: "absolute",}}
             onDragStart={(event) => event.preventDefault()} 
             onMouseUp={handleMouseUp} 
             onMouseDown={handleMouseDown} 
             onMouseMove={handleMouseMove}>
           
-            <div id="lock" style={{ 
-              width: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              height: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              marginLeft: props.boxWidth / 2 * 0.225,
+            <div className="dial" id={props.id} style={{ 
+              width: "100%", // Usa el menor valor para asegurar que sea cuadrado
+              height: "100%", // Usa el menor valor para asegurar que sea cuadrado
+              //marginLeft: props.boxWidth / 2 * 0.225,
+              
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
               transition: props.isReseting ? "transform 2.5s ease" : "none", // Transición suave solo durante el reset
             }}></div>
             <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
-              >{props.rotationAngle/6}</p>      
+              >{Math.round(props.rotationAngle/3)}</p>      
               <audio id="audio_wheel" src="sounds/spin.wav" autostart="false" preload="auto" />    
         </div>
     );
 }
 
-export default SafeBoxDial;
+export default Dial;
