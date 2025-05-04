@@ -92,7 +92,7 @@ const  Dial = ( props ) => {
             //top: props.boxHeight * 0.33,
             //left: props.appwidth / 2 + props.boxWidth / 2 * 0.1,
             right: props.xPosition,
-            top: "70%",
+            top: "71%",
             
             cursor: "pointer",
             position: "absolute",}}

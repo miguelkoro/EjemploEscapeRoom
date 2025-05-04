@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './../assets/scss/main.scss';
 import Dial from './Dial';
 import Ray from './Ray';
+import BoxButton from './BoxButton';
 
 const MainScreen = (props) => {
   const [checking, setChecking] = useState(false);
@@ -12,7 +13,8 @@ const MainScreen = (props) => {
   //
   const [rotationAngle, setRotationAngle] = useState(0); // Estado para la rotación
 
-
+  const dialSpacing = boxWidth * 0.19; // Espaciado horizontal entre los diales
+  const initialPosition = props.appwidth / 2 + boxWidth / 2  * -0.4; // Posición inicial del primer dial desde la derecha
 
   const [isReseting, setIsReseting] = useState(false); // Estado para saber si se está reiniciando el lock
   const [tries, setTries] = useState(0); // Contador de intentos
@@ -105,6 +107,10 @@ const MainScreen = (props) => {
     });}
   } 
 
+  const checkSolution = () => {
+    console.log("Solution: ", solutionArray);
+  }
+
 
   useEffect(() => { // Comprueba si se ha alcanzado el número máximo de intentos (En local y en API)    
     /*TEST_LOCAL ?  
@@ -119,26 +125,27 @@ const MainScreen = (props) => {
         {props.show ? (
           <div>
             <Dial id={"dial-frequency"} boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
-              rotationAngle={frequency} setRotationAngle={setFrequency}
-              setSolutionArray={setSolutionArray} isReseting={isReseting}
-              xPosition={"57%"}/>
+              rotationAngle={frequency} setRotationAngle={setFrequency} isReseting={isReseting}
+              xPosition={initialPosition + dialSpacing * 2}/>
             <Dial id={"dial-wavelength"}  boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
-              rotationAngle={wavelength} setRotationAngle={setWavelength}
-              setSolutionArray={setSolutionArray} isReseting={isReseting}
-              xPosition={"48%"}/>
+              rotationAngle={wavelength} setRotationAngle={setWavelength} isReseting={isReseting} 
+              xPosition={initialPosition + dialSpacing}/>
             <Dial id={"dial-amplitude"}  boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
-              rotationAngle={amplitude} setRotationAngle={setAmplitude}
-              setSolutionArray={setSolutionArray} isReseting={isReseting}
-              xPosition={"39%"}/>
-            <Ray  boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>
+              rotationAngle={amplitude} setRotationAngle={setAmplitude} isReseting={isReseting}
+              xPosition={initialPosition}/>
+            <Ray boxHeight={boxHeight} boxWidth={boxWidth} checking={checking} 
+              frequency={frequencyMapped} amplitude={amplitudeMapped} wavelength={wavelengthMapped}/>
+            <BoxButton value={0} position={initialPosition - dialSpacing} boxWidth={boxWidth} 
+              boxHeight={boxHeight} onClick={checkSolution} appwidth={props.appwidth}  appheight={props.appheight}/>
+
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />
                    
             {/** Luces de correcto o incorrecto*/}
-            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
-            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.3, top: props.appheight / 2 - boxHeight / 2 * 0.84 }} ></div> 
+            <div className="boxlight boxlight_off" style={{ display: light === "off" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.5, bottom: props.appheight / 2 - boxHeight / 2 * 0.52 }} ></div> 
+            <div className="boxlight boxlight_red" style={{ display: light === "red" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.5, bottom: props.appheight / 2 - boxHeight / 2 * 0.52 }} ></div> 
+            <div className="boxlight boxlight_green" style={{ display: light === "green" ? "block" : "none", left: props.appwidth / 2 + boxWidth / 2 * 0.5, bottom: props.appheight / 2 - boxHeight / 2 * 0.52 }} ></div> 
         </div>) : null}
     </div>);
 };

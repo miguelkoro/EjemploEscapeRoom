@@ -14,8 +14,8 @@ div.dial{
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
-	display: flex;
-	position: relative;
+	/*display: flex;*/
+	/*position: relative;*/
 	pointer-events: none;
 	//top: 21%;
 }
@@ -53,6 +53,16 @@ div.boxlight {
 	text-decoration: none;
 	border-image: none;
 
+}
+
+div.boxButton{
+	background-image: url("../images/button.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	/*display: flex;*/
+	/*position: relative;*/
+	//top: 21%;
 }
 
 div.boxlight.boxlight_off {
