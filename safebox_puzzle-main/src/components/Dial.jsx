@@ -106,7 +106,8 @@ const  Dial = ( props ) => {
             onDragStart={(event) => event.preventDefault()} 
             onMouseUp={handleMouseUp} 
             onMouseDown={handleMouseDown} 
-            onMouseMove={handleMouseMove}>
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setIsMouseDown(false)} >
           
             <div className="dial" id={props.id} style={{ 
               width: "100%", // Usa el menor valor para asegurar que sea cuadrado
