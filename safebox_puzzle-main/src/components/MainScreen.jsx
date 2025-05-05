@@ -37,6 +37,18 @@ const MainScreen = (props) => {
   const MIN_LENGHT = 4; //Longitud minima de la contraseña
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
+  const channels = [
+    { id: 12345, name: "Never Gonna Give you up", sources: [{src:"https://youtu.be/dQw4w9WgXcQ?si=ReWN7oDLo1kUD1zR&t=42", type: "video/youtube" }]},
+    { id: 54321, name: "Major Tom", sources: [{src:"https://www.youtube.com/watch?v=iYYRH4apXDo", type: "video/youtube" }]},
+    { id: 21465, name: "Mr Roboto", sources: [{src:"https://youtu.be/uc6f_2nPSX8?si=0Qeg3ImkfDbcQWcm", type: "video/youtube"}] },
+    { id: 22228, name: "I Ran", sources: [{src:"https://youtu.be/iIpfWORQWhU?si=2bwXOMzyy0unAD-1", type: "video/youtube" }]},
+    { id: 23545, name: "This Fire", sources: [{src:"https://www.youtube.com/watch?v=haW_ruZ_Be8", type: "video/youtube" }]},
+    { id: 23985, name: "Running up that hill", sources: [{src:"https://youtu.be/wp43OdtAAkM?si=uCBahW4wsL6MUpxB", type: "video/youtube"}] },
+    { id: 23845, name: "The Cigarette", sources: [{src:"https://youtu.be/4TV_128Fz2g?si=OlZpJOoKEaIHSoMB", type: "video/youtube" }]},
+    { id: 23445, name: "Documental Titanic", sources: [{src:"https://youtu.be/8d_FxY-8D1I?si=yaiPkrPONcrUi6fM", type: "video/youtube" }]},
+    { id: 1792, name: "Documental Titanic", sources: [{src:"https://youtu.be/hqVdCMpmzfo?si=TR8yfpLxxxrMsKwF", type: "video/youtube" }]},
+  ]
+
 
   const changeBoxLight = (success, solution) => {
     let audio;
@@ -169,10 +181,23 @@ const MainScreen = (props) => {
     
   };
 
+  const checkChannels = () => {
+    const channel = channels.find((channel) => channel.id === parseInt(solution));
+    if (channel) {
+      rightChannel(channel); // Cambia a video de éxito
+      //setSolution(channel.name); // Actualiza la solución con el nombre del canal
+      //setPlayerOptions({...playerOptions, sources: [{src: channel.source, type: channel.type,},]});
+    } else {
+      //setSolution(""); // Reinicia la solución si no se encuentra el canal
+      wrongChannel(); // Cambia a video de error
+    }
+  }
+
   useEffect(() => {
     if (solution.length >= MIN_LENGHT) {
       console.log("Checking solution...", solution);
-      Number(solution)===PASSWORD_API ? rightChannel() : wrongChannel(); 
+      //Number(solution)===PASSWORD_API ? rightChannel() : wrongChannel(); 
+      checkChannels(); // Comprueba si la solución es un canal válido
     }else if(solution.length != 0 && solution.length < MIN_LENGHT){
       console.log("Solution too short", solution);
       wrongChannel();
@@ -199,13 +224,13 @@ const MainScreen = (props) => {
     }
   }
 
-  const rightChannel = () => {
-    setPlayerOptions(youtubeVideoOptions); // Guarda las opciones en el estado `playerOptions`
+  const rightChannel = (channel) => {
+    setPlayerOptions(channel); // Guarda las opciones en el estado `playerOptions`
     setLight("green");
     if (playerRef.current) {
       try{
         playerRef.current.pause(); // Pausa el video actual
-        playerRef.current.src(youtubeVideoOptions.sources); // Cambia la fuente del reproductor
+        playerRef.current.src(channel.sources); // Cambia la fuente del reproductor
         playerRef.current.load(); // Carga el nuevo video
         handleVolume(); // Establece el volumen
         //playerRef.current.play(); // Reproduce el nuevo video
