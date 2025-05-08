@@ -6,15 +6,19 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"; // Importa G
 import earthTexture from "../assets/images/earth.jpg"; // Importa la imagen local
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // Importa OrbitControls
 import { use } from "react";
+import { coordinates } from "../assets/coordinates";
 
 
 //https://sketchfab.com/3d-models/globe-e7ee3a2f112342008df4193e112ccd2c
 //https://www.solarsystemscope.com/textures/
+//https://github.com/grafana/worldmap-panel/blob/master/src/data/countries.json
 const ThreeScene = (props) => {
     const mountRef = useRef(null);
     const sceneRef = useRef(new THREE.Scene());
     const cameraRef = useRef(null);
     const rendererRef = useRef(null);
+
+    const hasMoved = useRef(false); // Estado para detectar si el ratón se movió
     //const earthRef = useRef(null);
 
     const [selectedCountries, setSelectedCountries] = useState([]);
@@ -42,7 +46,7 @@ const ThreeScene = (props) => {
     const previousMousePosition = useRef({ x: 0, y: 0 }); // Posición previa del ratón
 
     
-    const coordinates = [
+    /*const coordinates = [
         { country: "Spain", sign:"ES", latitude: 40.2085 , longitude: -3.713 }, // Ecuador
         { country: "Andorra", sign:"AD", latitude: 42.5422699 , longitude: 1.5976721 }, // Ecuador
         { country: "Italy", sign:"IT", latitude: 41.29246 , longitude: 12.5736108 }, // Ecuador
@@ -70,7 +74,20 @@ const ThreeScene = (props) => {
         { country: "Croatia", sign:"HR", latitude: 45.1 , longitude: 15.2 }, // Ecuador
         { country: "Japan", sign:"JP", latitude: 36.2048 , longitude: 138.2529 }, // Ecuador
         { country: "South Korea", sign:"KR", latitude: 35.9078 , longitude: 127.7669 }, // Ecuador
-    ]
+        { country: "China", sign:"CN", latitude: 35.8617 , longitude: 104.1954 }, // Ecuador
+        { country: "India", sign:"IN", latitude: 20.5937 , longitude: 78.9629 }, // Ecuador
+        { country: "Mexico", sign:"MX", latitude: 23.6345 , longitude: -102.5528 }, // Ecuador
+        { country: "Brazil", sign:"BR", latitude: -14.235 , longitude: -51.9253 }, // Ecuador
+        { country: "Canada", sign:"CA", latitude: 56.1304 , longitude: -106.3468 }, // Ecuador
+        { country: "United States", sign:"US", latitude: 37.0902 , longitude: -95.7129 }, // Ecuador
+        { country: "Mozambique", sign:"MZ", latitude: -18.6657 , longitude: 35.5296 }, // Ecuador
+        { country: "South Africa", sign:"ZA", latitude: -30.5595 , longitude: 22.9375 }, // Ecuador
+        { country: "Egypt", sign:"EG", latitude: 26.8206 , longitude: 30.8025 }, // Ecuador
+        { country: "Nigeria", sign:"NG", latitude: 9.082 , longitude: 8.6753 }, // Ecuador
+        { country: "Russia", sign:"RU", latitude: 61.524 , longitude: 105.318 }, // Ecuador
+        { country: "Australia", sign:"AU", latitude: -25.2744 , longitude: 133.7751 }, // Ecuador
+        { country: "New Zealand", sign:"NZ", latitude: -40.9006 , longitude: 174.886 }, // Ecuador
+    ]*/
 
     const setupControls = () => {
 
@@ -153,18 +170,18 @@ const ThreeScene = (props) => {
 
     const addMarkersToSphere = (coordinates, radius) => {
         const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Color rojo para los marcadores
-        const markerGeometry = new THREE.SphereGeometry(0.02, 16, 16); // Pequeña esfera para el marcador
+        const markerGeometry = new THREE.SphereGeometry(0.016, 16, 16); // Pequeña esfera para el marcador
     
         //const newMarkers = []; // Array para almacenar los marcadores creados
 
-        coordinates.forEach(({ latitude, longitude, country }) => {
+        coordinates.forEach(({ latitude, longitude, name }) => {
             // Convertir coordenadas geográficas a cartesianas
             const {x,y,z} = coordinateToSphere(latitude, longitude, radius);
             // Crear el marcador
             const marker = new THREE.Mesh(markerGeometry, markerMaterial);
             marker.position.set(x, y, z);    
             // Agregar el nombre del país al marcador
-            marker.userData.country = country;
+            marker.userData.name = name;
             // Agregar el marcador al grupo de rotación
             markersGroupRef.current.add(marker);
 
@@ -172,20 +189,42 @@ const ThreeScene = (props) => {
         });
     };
 
-    const createCurve = (positions) => {
-        if (positions.length < 2) return; // No crear la curva si hay menos de 2 puntos    
-        // Crear una curva suave entre los puntos seleccionados
-        const curve = new THREE.CatmullRomCurve3(positions);    
-        // Generar la geometría de la curva
-        const curveGeometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(50)); // 50 puntos para suavidad
-        // Crear el material de la línea
-        const curveMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 }); // Color verde    
-        // Crear la línea
-        const curveLine = new THREE.Line(curveGeometry, curveMaterial);    
-        // Agregar la línea a la escena
-        curvesGroupRef.current.add(curveLine);
+    const createCurve = (start, end, duration = 2000) => {
+        // Calcular los puntos intermedios para crear una curva más adaptada
+        const distance = start.distanceTo(end); // Distancia entre los puntos
+        let points = [];
 
-        
+        for (let i = 0; i <= 20; i++) {
+            // Interpolar entre los puntos inicial y final
+            let p = new THREE.Vector3().lerpVectors(start, end, i / 20);
+
+            // Ajustar el radio usando una función seno para crear una curva más pronunciada
+            const factor = 1 + Math.sin(Math.PI * (i / 20)) * Math.min(0.5, distance * 0.2); // Ajusta el multiplicador para controlar la altura
+            p.normalize().multiplyScalar(1 * factor); // Normalizar y escalar según el factor
+            points.push(p);
+        }
+
+        // Crear la curva a partir de los puntos generados
+        const curve = new THREE.CatmullRomCurve3(points);
+
+        // Crear la geometría del tubo
+        const tubeGeometry = new THREE.TubeGeometry(
+            curve,
+            100, // Número de segmentos a lo largo del tubo
+            0.005, // Grosor del tubo
+            8, // Número de segmentos radiales
+            false // No cerrar el tubo
+        );
+
+        // Crear el material del tubo
+        const tubeMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Color verde
+
+        // Crear el mesh del tubo
+        const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+
+        // Agregar el tubo al grupo de curvas
+        curvesGroupRef.current.add(tubeMesh);
+            
     };
 
 
@@ -242,6 +281,7 @@ const ThreeScene = (props) => {
 
     const handleMouseDown = (event) => {
         isDragging.current = true;
+        hasMoved.current = false; // Reiniciar el estado de movimiento
         previousMousePosition.current = { x: event.clientX, y: event.clientY };
     };
 
@@ -254,9 +294,14 @@ const ThreeScene = (props) => {
         const deltaX = event.clientX - previousMousePosition.current.x;  
         rotationAxisRef.current.rotation.y += deltaX * 0.003;
         previousMousePosition.current = { x: event.clientX, y: event.clientY };
+
+        // Detectar movimiento del ratón
+        hasMoved.current = true;
     };
 
     const handleClick = (event) => {
+        if (hasMoved.current) return; // No seleccionar si el ratón se movió
+        //if (!isDragging.current || !rotationAxisRef.current) return;
         // Calcular la posición del ratón en coordenadas normalizadas (-1 a +1)
         const rect = rendererRef.current.domElement.getBoundingClientRect();
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -270,10 +315,10 @@ const ThreeScene = (props) => {
             // Obtener el primer objeto intersectado
             const marker = intersects[0].object;
             //if(!marker.userData)
-            if(!marker.userData.country) return; // Si no tiene el nombre del país, no hacer nada{
+            if(!marker.userData.name) return; // Si no tiene el nombre del país, no hacer nada{
             // Mostrar el nombre del país en la consola
             setSelectedCountries((prev) => [...prev, marker]);
-            console.log(`Marcador clicado: ${marker.userData.country}`);
+            console.log(`Marcador clicado: ${marker.userData.name}`);
         }
     };
 
@@ -294,27 +339,7 @@ const ThreeScene = (props) => {
             const start = selectedCountries[i].position; // Posición del país actual
             const end = selectedCountries[i + 1].position; // Posición del siguiente país
 
-                    // Calcular un punto intermedio para crear una curva más pronunciada
-            const midPoint = new THREE.Vector3(
-                (start.x + end.x) / 2,
-                (start.y + end.y) / 2 + 0.1, // Ajusta el desplazamiento en Y para la abertura
-                (start.z + end.z) / 2
-            );
-    
-            // Crear una curva entre los dos puntos
-            const curve = new THREE.CatmullRomCurve3([start, midPoint,  end]);
-    
-            // Generar la geometría de la curva
-            const curveGeometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(50)); // 50 puntos para suavidad
-    
-            // Crear el material de la línea
-            const curveMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 10  }); // Color verde
-    
-            // Crear la línea
-            const curveLine = new THREE.Line(curveGeometry, curveMaterial);
-    
-            // Agregar la línea a la escena
-            curvesGroupRef.current.add(curveLine);
+            createCurve(start, end); // Crear la curva entre los dos países
 
             //setLightColor("0x00ff00"); // Cambia el color de la luz a verde
         }
