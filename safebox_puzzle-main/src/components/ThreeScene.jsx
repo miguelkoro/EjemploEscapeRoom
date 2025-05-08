@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"; // Importa GLTFLoader
 //import Earth from "../assets/textures/earth.jpg";
 
 import earthTexture from "../assets/images/earth.jpg"; // Importa la imagen local
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // Importa OrbitControls
-import { sign } from "three/tsl";
+import { use } from "react";
+
 
 //https://sketchfab.com/3d-models/globe-e7ee3a2f112342008df4193e112ccd2c
 //https://www.solarsystemscope.com/textures/
@@ -14,10 +15,21 @@ const ThreeScene = (props) => {
     const sceneRef = useRef(new THREE.Scene());
     const cameraRef = useRef(null);
     const rendererRef = useRef(null);
-    const earthRef = useRef(null);
+    //const earthRef = useRef(null);
+
+    const [selectedCountries, setSelectedCountries] = useState([]);
+    const [curves, setCurves] = useState([]);
+
+    const [lightColor, setLightColor] = useState("0xffffff"); // Estado para el color de la luz
+
+    //const [markerPoints, setMarkerPoints] = useState([]);
 
     const rotationAxisRef = useRef(null);
+    const markersGroupRef = useRef(null);
+    const curvesGroupRef = useRef(null);
 
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
     //const globeGroupRef = useRef(null);
     const controlsRef = useRef(null); // Referencia para OrbitController
@@ -143,15 +155,37 @@ const ThreeScene = (props) => {
         const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Color rojo para los marcadores
         const markerGeometry = new THREE.SphereGeometry(0.02, 16, 16); // Pequeña esfera para el marcador
     
-        coordinates.forEach(({ latitude, longitude }) => {
+        //const newMarkers = []; // Array para almacenar los marcadores creados
+
+        coordinates.forEach(({ latitude, longitude, country }) => {
             // Convertir coordenadas geográficas a cartesianas
             const {x,y,z} = coordinateToSphere(latitude, longitude, radius);
             // Crear el marcador
             const marker = new THREE.Mesh(markerGeometry, markerMaterial);
             marker.position.set(x, y, z);    
+            // Agregar el nombre del país al marcador
+            marker.userData.country = country;
             // Agregar el marcador al grupo de rotación
-            rotationAxisRef.current.add(marker);
+            markersGroupRef.current.add(marker);
+
+            //newMarkers.push(marker); // Agregar el marcador al array
         });
+    };
+
+    const createCurve = (positions) => {
+        if (positions.length < 2) return; // No crear la curva si hay menos de 2 puntos    
+        // Crear una curva suave entre los puntos seleccionados
+        const curve = new THREE.CatmullRomCurve3(positions);    
+        // Generar la geometría de la curva
+        const curveGeometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(50)); // 50 puntos para suavidad
+        // Crear el material de la línea
+        const curveMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 }); // Color verde    
+        // Crear la línea
+        const curveLine = new THREE.Line(curveGeometry, curveMaterial);    
+        // Agregar la línea a la escena
+        curvesGroupRef.current.add(curveLine);
+
+        
     };
 
 
@@ -180,16 +214,26 @@ const ThreeScene = (props) => {
         const rotationAxis = new THREE.Group();
         rotationAxisRef.current = rotationAxis; // Guardar referencia al grupo interno
         globeGroup.add(rotationAxis);
+
+        // Crear un grupo para los marcadores
+        const markersGroup = new THREE.Group();
+        markersGroupRef.current = markersGroup; // Guardar referencia al grupo de marcadores
+        rotationAxis.add(markersGroup);
+
+        // Crear un grupo para las curvas
+        const curvesGroup = new THREE.Group();
+        curvesGroupRef.current = curvesGroup; // Guardar referencia al grupo de curvas
+        rotationAxis.add(curvesGroup);
     
         // Crear la esfera (earth)
         const earth = createEarth();
-        earth.rotation.y = THREE.MathUtils.degToRad(-90); // Ajustar según sea necesario
+        earth.rotation.y = THREE.MathUtils.degToRad(-90); 
         rotationAxis.add(earth); // Agregar la esfera al grupo interno
     
         
         // Crear los polos
-        globeGroup.add(createPole(0, 1.5, 0)); // Norte
-        globeGroup.add(createPole(0, -1.5, 0)); // Sur
+        globeGroup.add(createPole(0, 1.1, 0)); // Norte
+        globeGroup.add(createPole(0, -1.1, 0)); // Sur
             // Crear los marcadores en la esfera
         addMarkersToSphere(coordinates, 1); // Radio de la esfera = 1
 
@@ -202,7 +246,7 @@ const ThreeScene = (props) => {
     };
 
     const handleMouseUp = () => {
-    isDragging.current = false;
+        isDragging.current = false;
     };
 
     const handleMouseMove = (event) => {
@@ -210,6 +254,27 @@ const ThreeScene = (props) => {
         const deltaX = event.clientX - previousMousePosition.current.x;  
         rotationAxisRef.current.rotation.y += deltaX * 0.003;
         previousMousePosition.current = { x: event.clientX, y: event.clientY };
+    };
+
+    const handleClick = (event) => {
+        // Calcular la posición del ratón en coordenadas normalizadas (-1 a +1)
+        const rect = rendererRef.current.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;    
+        // Configurar el raycaster
+        raycaster.setFromCamera(mouse, cameraRef.current);     
+        // Detectar intersecciones con los marcadores
+        const intersects = raycaster.intersectObjects(markersGroupRef.current.children, true);
+        //console.log("Intersecciones:", markerPoints);    
+        if (intersects.length > 0) {
+            // Obtener el primer objeto intersectado
+            const marker = intersects[0].object;
+            //if(!marker.userData)
+            if(!marker.userData.country) return; // Si no tiene el nombre del país, no hacer nada{
+            // Mostrar el nombre del país en la consola
+            setSelectedCountries((prev) => [...prev, marker]);
+            console.log(`Marcador clicado: ${marker.userData.country}`);
+        }
     };
 
     // Animación
@@ -220,6 +285,49 @@ const ThreeScene = (props) => {
         }
         rendererRef.current.render(sceneRef.current, cameraRef.current);
     };
+
+    useEffect(() => {
+        if (selectedCountries.length < 2) return; // No crear curvas si hay menos de 2 países seleccionados
+
+        // Iterar sobre los países seleccionados y crear curvas entre pares consecutivos
+        for (let i = 0; i < selectedCountries.length - 1; i++) {
+            const start = selectedCountries[i].position; // Posición del país actual
+            const end = selectedCountries[i + 1].position; // Posición del siguiente país
+
+                    // Calcular un punto intermedio para crear una curva más pronunciada
+            const midPoint = new THREE.Vector3(
+                (start.x + end.x) / 2,
+                (start.y + end.y) / 2 + 0.1, // Ajusta el desplazamiento en Y para la abertura
+                (start.z + end.z) / 2
+            );
+    
+            // Crear una curva entre los dos puntos
+            const curve = new THREE.CatmullRomCurve3([start, midPoint,  end]);
+    
+            // Generar la geometría de la curva
+            const curveGeometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(50)); // 50 puntos para suavidad
+    
+            // Crear el material de la línea
+            const curveMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00, linewidth: 10  }); // Color verde
+    
+            // Crear la línea
+            const curveLine = new THREE.Line(curveGeometry, curveMaterial);
+    
+            // Agregar la línea a la escena
+            curvesGroupRef.current.add(curveLine);
+
+            //setLightColor("0x00ff00"); // Cambia el color de la luz a verde
+        }
+        
+    }, [selectedCountries]); // Dependencia para actualizar el efecto cuando cambie selectedCountries
+
+    useEffect(() => {
+        // Encuentra la luz en la escena
+        const ambientLight = sceneRef.current.children.find((child) => child.isAmbientLight);    
+        if (ambientLight) {
+            ambientLight.color.set(lightColor); // Cambia el color de la luz
+        }
+    }, [lightColor]); // Ejecutar cada vez que cambie lightColor
 
     useEffect(() => {
         // Configuración inicial
@@ -234,12 +342,13 @@ const ThreeScene = (props) => {
         canvas.addEventListener("mousedown", handleMouseDown);
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("mousemove", handleMouseMove);
-
+        canvas.addEventListener("click", handleClick); // Agregar evento de clic
         // Cleanup
         return () => {
             canvas.removeEventListener("mousedown", handleMouseDown);
             canvas.removeEventListener("mouseup", handleMouseUp);
             canvas.removeEventListener("mousemove", handleMouseMove);
+            canvas.removeEventListener("click", handleClick); 
             rendererRef.current.dispose();
             mountRef.current.removeChild(rendererRef.current.domElement);
         };
