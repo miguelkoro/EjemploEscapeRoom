@@ -24,7 +24,7 @@ const ThreeScene = (props) => {
     const [selectedCountries, setSelectedCountries] = useState([]);
     const [curves, setCurves] = useState([]);
 
-    const [lightColor, setLightColor] = useState("0xffffff"); // Estado para el color de la luz
+    const [lightColor, setLightColor] = useState(0xffffff); // Estado para el color de la luz
 
     //const [markerPoints, setMarkerPoints] = useState([]);
 
@@ -45,49 +45,6 @@ const ThreeScene = (props) => {
     const isDragging = useRef(false); // Estado para detectar si se está arrastrando
     const previousMousePosition = useRef({ x: 0, y: 0 }); // Posición previa del ratón
 
-    
-    /*const coordinates = [
-        { country: "Spain", sign:"ES", latitude: 40.2085 , longitude: -3.713 }, // Ecuador
-        { country: "Andorra", sign:"AD", latitude: 42.5422699 , longitude: 1.5976721 }, // Ecuador
-        { country: "Italy", sign:"IT", latitude: 41.29246 , longitude: 12.5736108 }, // Ecuador
-        { country: "France", sign:"FR", latitude: 46.603354 , longitude: 1.888334 }, // Ecuador
-        { country: "Portugal", sign:"PT", latitude: 39.399872 , longitude: -8.224454 }, // Ecuador
-        { country: "United Kingdom", sign:"GB", latitude: 55.378051 , longitude: -3.435973 }, // Ecuador
-        { country: "Germany", sign:"DE", latitude: 51.165691 , longitude: 10.451526 }, // Ecuador
-        { country: "Netherlands", sign:"NL", latitude: 52.379189 , longitude: 4.899431 }, // Ecuador
-        { country: "Luxembourg", sign:"LU", latitude: 49.6118 , longitude: 6.1319 }, // Ecuador
-        { country: "Switzerland", sign:"CH", latitude: 46.8182 , longitude: 8.2275 }, // Ecuador
-        { country: "Austria", sign:"AT", latitude: 47.5162 , longitude: 14.5501 }, // Ecuador
-        { country: "Ireland", sign:"IE", latitude: 53.4129 , longitude: -8.2439 }, // Ecuador
-        { country: "Iceland", sign:"IS", latitude: 64.9631 , longitude: -19.0208 }, // Ecuador
-        { country: "Norway", sign:"NO", latitude: 60.472 , longitude: 8.4689 }, // Ecuador
-        { country: "Sweden", sign:"SE", latitude: 60.1282 , longitude: 18.6435 }, // Ecuador
-        { country: "Finland", sign:"FI", latitude: 61.9241 , longitude: 25.7482 }, // Ecuador
-        { country: "Denmark", sign:"DK", latitude: 56.2639 , longitude: 9.5018 }, // Ecuador
-        { country: "Estonia", sign:"EE", latitude: 58.5953 , longitude: 25.0136 }, // Ecuador
-        { country: "Poland", sign:"PL", latitude: 51.9194 , longitude: 19.1451 }, // Ecuador
-        { country: "Czech Republic", sign:"CZ", latitude: 49.8175 , longitude: 15.473 }, // Ecuador
-        { country: "Slovakia", sign:"SK", latitude: 48.669 , longitude: 19.699 }, // Ecuador
-        { country: "Hungary", sign:"HU", latitude: 47.1625 , longitude: 19.5033 }, // Ecuador
-        { country: "Romania", sign:"RO", latitude: 45.9432 , longitude: 24.9668 }, // Ecuador
-        { country: "Serbia", sign:"RS", latitude: 44.0165 , longitude: 21.0059 }, // Ecuador
-        { country: "Croatia", sign:"HR", latitude: 45.1 , longitude: 15.2 }, // Ecuador
-        { country: "Japan", sign:"JP", latitude: 36.2048 , longitude: 138.2529 }, // Ecuador
-        { country: "South Korea", sign:"KR", latitude: 35.9078 , longitude: 127.7669 }, // Ecuador
-        { country: "China", sign:"CN", latitude: 35.8617 , longitude: 104.1954 }, // Ecuador
-        { country: "India", sign:"IN", latitude: 20.5937 , longitude: 78.9629 }, // Ecuador
-        { country: "Mexico", sign:"MX", latitude: 23.6345 , longitude: -102.5528 }, // Ecuador
-        { country: "Brazil", sign:"BR", latitude: -14.235 , longitude: -51.9253 }, // Ecuador
-        { country: "Canada", sign:"CA", latitude: 56.1304 , longitude: -106.3468 }, // Ecuador
-        { country: "United States", sign:"US", latitude: 37.0902 , longitude: -95.7129 }, // Ecuador
-        { country: "Mozambique", sign:"MZ", latitude: -18.6657 , longitude: 35.5296 }, // Ecuador
-        { country: "South Africa", sign:"ZA", latitude: -30.5595 , longitude: 22.9375 }, // Ecuador
-        { country: "Egypt", sign:"EG", latitude: 26.8206 , longitude: 30.8025 }, // Ecuador
-        { country: "Nigeria", sign:"NG", latitude: 9.082 , longitude: 8.6753 }, // Ecuador
-        { country: "Russia", sign:"RU", latitude: 61.524 , longitude: 105.318 }, // Ecuador
-        { country: "Australia", sign:"AU", latitude: -25.2744 , longitude: 133.7751 }, // Ecuador
-        { country: "New Zealand", sign:"NZ", latitude: -40.9006 , longitude: 174.886 }, // Ecuador
-    ]*/
 
     const setupControls = () => {
 
@@ -118,15 +75,27 @@ const ThreeScene = (props) => {
     const setupRenderer = () => {
         rendererRef.current = new THREE.WebGLRenderer({ alpha: true }); // Fondo transparente
         rendererRef.current.setSize(props.boxWidth, props.boxHeight);
-        rendererRef.current.toneMappingExposure =1; // Ajusta el exposure (prueba con valores entre 0.5 y 2)
+        //rendererRef.current.toneMapping = THREE.ACESFilmicToneMapping; // Ajusta el tono de la escena
+        //rendererRef.current.toneMappingExposure =0.5; // Ajusta el exposure (prueba con valores entre 0.5 y 2)
         //rendererRef.current.setClearColor(0x000000, 0); // Fondo transparente
+        rendererRef.current.toneMapping = THREE.ACESFilmicToneMapping; // Usar mapeo de tonos ACES para mejor contraste
+        rendererRef.current.toneMappingExposure = 1; // Ajusta la exposición (prueba valores entre 0.8 y 1.5)
+        rendererRef.current.outputEncoding = THREE.sRGBEncoding;; // Configurar el renderizador para usar sRGB
         mountRef.current.appendChild(rendererRef.current.domElement);
     };
 
     const createEarth = () => {
         const sphereGeometry = new THREE.SphereGeometry(1, 60, 60);
-        const sphereTexture = new THREE.TextureLoader().load(earthTexture);
-        const sphereMaterial = new THREE.MeshBasicMaterial({ map: sphereTexture });
+        const sphereTexture = new THREE.TextureLoader().load(earthTexture, (texture) => {
+            texture.encoding = THREE.sRGBEncoding; // Asegúrate de usar sRGB para colores correctos
+        });
+        //const sphereMaterial = new THREE.MeshBasicMaterial({ map: sphereTexture });
+            // Usar MeshStandardMaterial para una mejor representación
+        const sphereMaterial = new THREE.MeshStandardMaterial({
+            map: sphereTexture,
+            roughness: 1, // Ajusta la rugosidad para un acabado mate
+            metalness: 0, // Sin efecto metálico
+        });
         
         return new THREE.Mesh(sphereGeometry, sphereMaterial);
     }
@@ -140,12 +109,18 @@ const ThreeScene = (props) => {
     }
 
     const createLights = () => {
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-        sceneRef.current.add(ambientLight);
+        /*const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        sceneRef.current.add(ambientLight);*/
     
-        const light = new THREE.PointLight(0xffffff, 3);
-        light.position.set(-1, -0.5, 2.8);
-        sceneRef.current.add(light);
+        /*const light = new THREE.PointLight(lightColor, 1);
+        light.position.set(-1, -0.5, 2.2);
+        sceneRef.current.add(light);*/
+
+            // Luz direccional para iluminar el modelo desde un ángulo específico
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5); // Intensidad ajustada a 0.8
+        directionalLight.position.set(-0.5, 0.7, 2); // Posición de la luz
+        //directionalLight.rotation.y= THREE.MathUtils.degToRad(15); // Rotación de la luz
+        sceneRef.current.add(directionalLight);
     }
 
     const createGlobeStand = () => {
@@ -155,6 +130,7 @@ const ThreeScene = (props) => {
             (gltf) => {
                 const model = gltf.scene;
                 // Recorre todos los materiales del modelo
+                
 
                 model.position.set(0, -1.591, 0); // Posición del modelo
                 model.scale.set(8.1, 8.1, 8.1); // Escala del modelo
@@ -343,6 +319,7 @@ const ThreeScene = (props) => {
 
             //setLightColor("0x00ff00"); // Cambia el color de la luz a verde
         }
+        //setLightColor(0x00ff00); // Cambia el color de la luz a verde
         
     }, [selectedCountries]); // Dependencia para actualizar el efecto cuando cambie selectedCountries
 
