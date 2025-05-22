@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import BoxButton from './BoxButton.jsx';
 import './../assets/scss/main.scss';
 import ThreeScene from './ThreeScene.jsx';
+import ThreeReact from './ThreeReact.jsx';
 
 const MainScreen = (props) => {
   const [password, setPassword] = useState([]);
@@ -83,7 +84,7 @@ const MainScreen = (props) => {
   return (<div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}>
       {props.show ? (
           
-          <ThreeScene boxHeight={boxHeight} boxWidth={boxWidth}/>
+          <ThreeReact boxHeight={boxHeight} boxWidth={boxWidth}/>
 
           ) : null}
     </div>);
