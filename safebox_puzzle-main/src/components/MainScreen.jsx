@@ -6,8 +6,8 @@ import videojs from 'video.js';
 //import videojs from 'video.js';
 import "video.js/dist/video-js.css";
 import "videojs-youtube";
-import televisionImage from "../assets/images/Television.png";
 import { use } from 'react';
+import Remote from './Remote.jsx'; // Importa el componente Remote
 
 const MainScreen = (props) => {
   const [checking, setChecking] = useState(false);
@@ -37,6 +37,25 @@ const MainScreen = (props) => {
   const MIN_LENGHT = 4; //Longitud minima de la contraseña
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
+  const STYLE = 1 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
+  const styles = {
+    0: {
+      css: {width: boxWidth *0.77, position:"absolute",  marginLeft: "0.5%", marginTop: "18.6%"},
+      image: "images/Television_old.png",
+      button:{button_image: "url('images/ButtonTV.png')", button_width: 0.04, button_height: 0.05},
+      volume_bar:{ marginLeft: "10%", marginTop: "55%"},
+      channel_style: {marginTop: "22%", marginLeft: "10%"}
+    },
+    1: {
+      css: {width: boxWidth *0.9, position:"absolute", marginLeft: "5%", marginTop: "7%"},
+      image: "images/Television_modern.png",
+      button:{button_image: "url('images/Button_remote.png')", button_width: 0.055, button_height: 0.1},
+      volume_bar:{ marginLeft: "19%", marginTop: "52%"},
+      channel_style: {marginTop: "10%", marginLeft: "10%"}
+    },
+  }
+
+
   const channels = [
     { id: 12345, name: "Never Gonna Give you up", sources: [{src:"https://youtu.be/dQw4w9WgXcQ?si=ReWN7oDLo1kUD1zR&t=42", type: "video/youtube" }]},
     { id: 54321, name: "Major Tom", sources: [{src:"https://www.youtube.com/watch?v=iYYRH4apXDo", type: "video/youtube" }]},
@@ -46,7 +65,8 @@ const MainScreen = (props) => {
     { id: 23985, name: "Running up that hill", sources: [{src:"https://youtu.be/wp43OdtAAkM?si=uCBahW4wsL6MUpxB", type: "video/youtube"}] },
     { id: 23845, name: "The Cigarette", sources: [{src:"https://youtu.be/4TV_128Fz2g?si=OlZpJOoKEaIHSoMB", type: "video/youtube" }]},
     { id: 23445, name: "Documental Titanic", sources: [{src:"https://youtu.be/8d_FxY-8D1I?si=yaiPkrPONcrUi6fM", type: "video/youtube" }]},
-    { id: 1792, name: "Documental Titanic", sources: [{src:"https://youtu.be/hqVdCMpmzfo?si=TR8yfpLxxxrMsKwF", type: "video/youtube" }]},
+    { id: 1792, name: "Documental Rev Francesa", sources: [{src:"https://youtu.be/hqVdCMpmzfo?si=TR8yfpLxxxrMsKwF", type: "video/youtube" }]},
+    { id: 1111, name: "Twenty one Pilots Ride", sources: [{src:"https://www.youtube.com/watch?v=Pw-0pbY9JeU", type: "video/youtube" }]},
   ]
 
 
@@ -275,14 +295,6 @@ const MainScreen = (props) => {
   };
   const [playerOptions, setPlayerOptions] = useState(mp4VideoOptions); // Estado para las opciones del reproductor
   // Opciones para el video de YouTube
-  const youtubeVideoOptions = {
-    sources: [
-      {
-        src: "https://youtu.be/dQw4w9WgXcQ?si=ReWN7oDLo1kUD1zR&t=42",//"https://www.youtube.com/watch?v=iYYRH4apXDo",
-        type: "video/youtube",
-      },
-    ]    
-  };
 
  
 
@@ -358,6 +370,38 @@ const MainScreen = (props) => {
     }
   };
 
+  const remote = () => {
+
+  }
+
+  const TV_old_Buttons = (
+    <>
+      <div id="row1" className="row" style={{ top: "42%"}}>
+        <BoxButton value={"1"} position={1} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <BoxButton value={"2"} position={2} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <BoxButton value={"3"} position={3} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+      </div>
+      <div id="row2" className="row" style={{ top: "47%"}} >
+        <BoxButton value={"4"} position={4} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <BoxButton value={"5"} position={5} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <BoxButton value={"6"} position={6} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+      </div>
+      <div id="row3" className="row" style={{ top: "52%" }}>
+        <BoxButton value={"7"} position={7} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <BoxButton value={"8"} position={8} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <BoxButton value={"9"} position={9} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+      </div>
+      <div id="row4" className="row" style={{top: "57%"}}>
+        <BoxButton value={"0"} position={10} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+      </div>
+      <div id="row4" className="row" style={{top: "63%",}}>
+        <BoxButton value={"-"} position={11} onClick={decreaseVolume} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+        <svg width="20%" height="20%" viewBox="0 -1 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" fill="#ffffff" stroke="#ffffff"> <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>  <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g> <g id="SVGRepo_iconCarrier"> <title>multimedia / 4 - multimedia, audio, music, sound, max, speaker, volume icon</title> <g id="Free-Icons" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round" > <g transform="translate(-968.000000, -304.000000)" id="Group" stroke="#000000" strokeWidth="2"> <g transform="translate(967.000000, 302.000000)" id="Shape"> <path d="M18.22291,4.24772391 C20.3461043,5.89188107 21.7500001,8.74918751 21.7500001,12 C21.7500001,15.2055503 20.384926,18.0284761 18.3111758,19.6828962"></path> <path d="M16.25,16.5 C17.434,15.6838509 18.25,13.984472 18.25,12.0055901 C18.25,10.0267081 17.434,8.32732919 16.25,7.5"></path> <path d="M4.254916,9 L6.24999966,9 L11.2499997,3 L13.2499997,3 L13.2499997,20.9958147 L11.2499997,20.9958147 L6.24999966,15 L4.254916,15 C3.1503465,15 2.254916,14.1045695 2.254916,13 L2.254916,11 C2.254916,9.8954305 3.1503465,9 4.254916,9 Z"></path></g> </g> </g></g></svg>
+        <BoxButton value={"+"} position={12} onClick={increaseVolume} boxHeight={boxHeight} boxWidth={boxWidth} button={styles[STYLE].button}/>
+      </div>
+    </>
+  );
+
 
   return (
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }>
@@ -366,21 +410,21 @@ const MainScreen = (props) => {
           <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
            
             {/** Reproductor de video */}
-            <div style={{width: boxWidth *0.77, position:"absolute",  marginLeft: "0.5%", marginTop: "18.6%"}}>
+            <div style={styles[STYLE].css}>
               <VideoJS  options={playerOptions}
                 onReady={(player) => {playerRef.current = player;}}/>     
             </div>
-            <img id="television" src={televisionImage} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute", left: 0, top: 0}}/>
+            <img id="television" src={styles[STYLE].image} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute"}}/>
              {/** Luces de correcto o incorrecto*/}
             <div className="boxlight boxlight_off" style={{position: "absolute", display: light === "off" ? "block" : "none", marginLeft: "90%", marginTop: "17%" }} ></div> 
             <div className="boxlight boxlight_red" style={{position: "absolute", display: light === "red" ? "block" : "none", marginLeft: "90%", marginTop: "17%"  }} ></div> 
             <div className="boxlight boxlight_green" style={{position: "absolute", display: light === "green" ? "block" : "none", marginLeft: "90%", marginTop: "17%" }} ></div> 
             {/** CANAL */}
-            {solution && (<p className={`channel ${showCursor ? "show-cursor" : ""}`}>{solution}</p>)}
+            {solution && (<p className={`channel ${showCursor ? "show-cursor" : ""}`} style={styles[STYLE].channel_style}>{solution}</p>)}
             
             {/* Indicador de volumen */}
             {showVolume && (
-            <div style={{ position: "absolute", display:"flex", alignItems: 'center', marginLeft: "10%", marginTop: "55%"}}>
+            <div className='volume_div' style={styles[STYLE].volume_bar}>
               <p className='volume'>vol</p>
               <div className='volumeBar'>
                 <div className='volumeBarFilled' style={{width: `${volume * 100}%`}}></div>
@@ -389,29 +433,8 @@ const MainScreen = (props) => {
             )}
 
             {/* Fila de botones */}
-            <div id="row1" className="row" style={{ top: "42%"}}>
-              <BoxButton value={"1"} position={1} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <BoxButton value={"2"} position={2} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <BoxButton value={"3"} position={3} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-            </div>
-            <div id="row2" className="row" style={{ top: "47%"}} >
-              <BoxButton value={"4"} position={4} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <BoxButton value={"5"} position={5} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <BoxButton value={"6"} position={6} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-            </div>
-            <div id="row3" className="row" style={{ top: "52%" }}>
-              <BoxButton value={"7"} position={7} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <BoxButton value={"8"} position={8} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <BoxButton value={"9"} position={9} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-            </div>
-            <div id="row4" className="row" style={{top: "57%"}}>
-              <BoxButton value={"0"} position={11} onClick={onClickButton} boxHeight={boxHeight} boxWidth={boxWidth} />
-            </div>
-            <div id="row4" className="row" style={{top: "63%"}}>
-              <BoxButton value={"-"} position={11} onClick={decreaseVolume} boxHeight={boxHeight} boxWidth={boxWidth} />
-              <svg width="20%" height="20%" viewBox="0 -1 22 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" fill="#ffffff" stroke="#ffffff"> <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>  <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g> <g id="SVGRepo_iconCarrier"> <title>multimedia / 4 - multimedia, audio, music, sound, max, speaker, volume icon</title> <g id="Free-Icons" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" strokeLinecap="round" strokeLinejoin="round" > <g transform="translate(-968.000000, -304.000000)" id="Group" stroke="#000000" strokeWidth="2"> <g transform="translate(967.000000, 302.000000)" id="Shape"> <path d="M18.22291,4.24772391 C20.3461043,5.89188107 21.7500001,8.74918751 21.7500001,12 C21.7500001,15.2055503 20.384926,18.0284761 18.3111758,19.6828962"></path> <path d="M16.25,16.5 C17.434,15.6838509 18.25,13.984472 18.25,12.0055901 C18.25,10.0267081 17.434,8.32732919 16.25,7.5"></path> <path d="M4.254916,9 L6.24999966,9 L11.2499997,3 L13.2499997,3 L13.2499997,20.9958147 L11.2499997,20.9958147 L6.24999966,15 L4.254916,15 C3.1503465,15 2.254916,14.1045695 2.254916,13 L2.254916,11 C2.254916,9.8954305 3.1503465,9 4.254916,9 Z"></path></g> </g> </g></g></svg>
-              <BoxButton value={"+"} position={11} onClick={increaseVolume} boxHeight={boxHeight} boxWidth={boxWidth} />
-            </div>
+            { STYLE === 0 ? TV_old_Buttons : <div style={{overflow: "hidden", width: boxWidth, height:boxHeight, position:"absolute"}}>
+                <Remote boxWidth={boxWidth} boxHeight={boxHeight} onClickButton={onClickButton} decreaseVolume={decreaseVolume} increaseVolume={increaseVolume} button={styles[STYLE].button}/></div>}
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />

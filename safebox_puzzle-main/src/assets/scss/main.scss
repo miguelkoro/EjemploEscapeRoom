@@ -32,8 +32,7 @@ p.channel{
 	font-size: 7vmin;
 	position: absolute;
 	color: rgb(15, 167, 15);
-	margin-top: 22%;
-	margin-left: 10%;
+	
 	//max-width: 40%;
 	//background-color: rgba(0, 0, 0, 0.425);
 	/*font-family: "Sixtyfour Convergence", sans-serif;
@@ -97,6 +96,12 @@ font-style: normal;
 font-variation-settings:
 	"BLED" 70,
 	"SCAN" 10;
+}
+
+.volume_div{
+	position: absolute;
+	display:flex;
+	align-items: center;
 }
 
 div.volumeBar{
@@ -170,11 +175,11 @@ div.boxButton p {
   }
 
 div.boxButton {
-	background-image: url("../images/ButtonTV.png");
+	//background-image: url("images/ButtonTV.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
-	display: flex;
+	//display: flex;
 	color: white;
 
 }
@@ -195,4 +200,20 @@ div.row {
 	justify-content: center;
 	gap: 5px;
 	
+}
+
+.remote {
+	//cursor: pointer;
+	width: 25%;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+	bottom: -55%; // inicial, solo la mitad visible
+	transition: bottom 0.4s cubic-bezier(.4,2,.6,1);
+}
+.remote:hover {
+	bottom:-20% !important;
 }
