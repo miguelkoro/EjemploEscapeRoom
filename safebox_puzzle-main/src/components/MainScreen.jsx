@@ -21,6 +21,39 @@ const MainScreen = (props) => {
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
+  const STYLE = 2; // Estilo del dial, puede ser "classic" - 0,  "old" - 1, "modern" - 2
+  
+  const styles = {
+    0: {
+      lock: "../images/lock_classic.png",
+      dial: "../images/dial_classic.png",
+      dial_size: 0.4,
+      dial_sound: "sounds/spin.wav",
+      dial_text_color: "#000000",
+      dial_text_size: "13vmin",
+      dial_text_zIndex: 1,
+    },
+    1: {
+      lock: "images/lock_old.png",
+      dial: "images/dial_old.png",
+      dial_size: 0.5,
+      dial_sound: "sounds/spin_old2.wav",
+      dial_text_color:  "#FFFFFF",
+      dial_text_size: "11vmin",
+      dial_text_zIndex: 1,
+    },
+    2: {
+      lock: "images/lock_modern.png",
+      dial: "images/dial_modern.png",
+      dial_size: 0.6,
+      dial_sound: "sounds/spin.wav",
+      dial_text_color: "#59c2ca",
+      dial_text_size: "11vmin",
+      dial_text_zIndex: -1,
+    }
+  }
+  
+
 
   const changeBoxLight = (success, solution) => {
     let audio;
@@ -99,10 +132,11 @@ const MainScreen = (props) => {
 
 
   return (
-      <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}>
+      <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden")}
+        style={{backgroundImage: `url(${styles[STYLE].lock})`}}>
         {props.show ? (
           <div>
-            <SafeBoxDial
+            <SafeBoxDial styles={styles[STYLE]}
               boxWidth={boxWidth} boxHeight={boxHeight} checking={checking} 
               rotationAngle={rotationAngle} setRotationAngle={setRotationAngle}
               setSolutionArray={setSolutionArray} isReseting={isReseting}/>

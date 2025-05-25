@@ -1,5 +1,5 @@
 div#screen_main {
-	background-image:url("../images/background_lock.png");// url("../images/background.jpg");
+	//background-image:url("../images/background_lock.png");// url("../images/background.jpg");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
@@ -10,14 +10,16 @@ div#screen_main {
 }
 //
 div#lock{
-	background-image: url("../images/lock.png");
+	//background-image: url("../images/lock.png");
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
 	display: flex;
 	position: relative;
 	pointer-events: none;
-	top: 21%;
+	//z-index: -1;
+	//top: 21%;
+	transform: (-50%, - 50px); // Centra el lock en la pantalla
 }
 
 p#rotationNum{
@@ -27,10 +29,11 @@ p#rotationNum{
 	transform: translate(-50%, -50%); // Ajusta el centrado
 	margin: 0; // Elimina el margen del <p>
 	pointer-events: none; // Permite que los eventos del mouse pasen a través del <p>
-	color: black; // Cambia el color del texto
+	//color: black; // Cambia el color del texto
 	user-select: none; // Evita que el texto sea seleccionable
 	font-style: bold; // Aplica el estilo en negrita
-	font-size : 13vmin; // Cambia el tamaño de la fuente
+	//font-size : 13vmin; // Cambia el tamaño de la fuente
+	//z-index: 5;
 }
 
 //div.lockContainer{

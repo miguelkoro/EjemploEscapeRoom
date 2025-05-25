@@ -83,24 +83,28 @@ const  SafeBoxDial = ( props ) => {
         }}, [props.isReseting]); // Se ejecuta cuando isReseting cambia
 
     return(
-        <div className='lockContainer' style={{ width: props.boxWidth , height: props.boxHeight ,  
+        <div className='lockContainer' style={{  
             width: Math.min(props.boxWidth, props.boxHeight) * 0.7, 
-            height: Math.min(props.boxWidth, props.boxHeight) * 0.7}}
+            height: Math.min(props.boxWidth, props.boxHeight) * 0.7,
+            display: "flex", alignItems: "center", justifyContent: "center",}}
             onDragStart={(event) => event.preventDefault()} 
             onMouseUp={handleMouseUp} 
             onMouseDown={handleMouseDown} 
             onMouseMove={handleMouseMove}>
           
             <div id="lock" style={{ 
-              width: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              height: Math.min(props.boxWidth, props.boxHeight) * 0.4, // Usa el menor valor para asegurar que sea cuadrado
-              marginLeft: props.boxWidth / 2 * 0.225,
+              backgroundImage: `url(${props.styles.dial})`,
+              zIndex: props.styles.dial_text_zIndex,
+              width: Math.min(props.boxWidth, props.boxHeight) * props.styles.dial_size, // Usa el menor valor para asegurar que sea cuadrado
+              height: Math.min(props.boxWidth, props.boxHeight) * props.styles.dial_size, // Usa el menor valor para asegurar que sea cuadrado
+              //marginLeft: props.boxWidth / 2 * 0.225,
               transform: `rotate(${props.rotationAngle}deg)`, // Rotación dinámica.
               transition: props.isReseting ? "transform 2.5s ease" : "none", // Transición suave solo durante el reset
             }}></div>
             <p id="rotationNum" className='rotationNum' onDragStart={(event) => event.preventDefault()} 
+              style={{color: props.styles.dial_text_color, fontSize: props.styles.dial_text_size, zIndex:5}}
               >{props.rotationAngle/6}</p>      
-              <audio id="audio_wheel" src="sounds/spin.wav" autostart="false" preload="auto" />    
+              <audio id="audio_wheel" src={props.styles.dial_sound} autostart="false" preload="auto" />    
         </div>
     );
 }
