@@ -21,7 +21,7 @@ const MainScreen = (props) => {
   const PASSWORD_API = 12345; //Contraseña de la sala del escape room 
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
-  const STYLE = 2; // Estilo del dial, puede ser "classic" - 0,  "old" - 1, "modern" - 2
+  const STYLE = 1; // Estilo del dial, puede ser "classic" - 0,  "old" - 1, "modern" - 2
   
   const styles = {
     0: {
@@ -39,7 +39,7 @@ const MainScreen = (props) => {
       dial_size: 0.5,
       dial_sound: "sounds/spin_old2.wav",
       dial_text_color:  "#FFFFFF",
-      dial_text_size: "11vmin",
+      dial_text_size: "10vmin",
       dial_text_zIndex: 1,
     },
     2: {
