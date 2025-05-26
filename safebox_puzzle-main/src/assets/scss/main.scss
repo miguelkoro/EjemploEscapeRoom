@@ -217,3 +217,12 @@ div.row {
 .remote:hover {
 	bottom:-20% !important;
 }
+
+.empty_black {
+	background-color: rgba(22, 22, 22, 0.623);
+	position: absolute;
+	top: 20%;
+	left: 5%;
+	width: 90%;
+	height: 65%;
+}

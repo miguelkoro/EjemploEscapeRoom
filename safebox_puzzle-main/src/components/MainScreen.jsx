@@ -37,14 +37,14 @@ const MainScreen = (props) => {
   const MIN_LENGHT = 4; //Longitud minima de la contraseña
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
-  const STYLE = 1 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
+  const STYLE = 0 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
   const styles = {
     0: {
-      css: {width: boxWidth *0.77, position:"absolute",  marginLeft: "0.5%", marginTop: "18.6%"},
+      css: {width: boxWidth *0.60, position:"absolute",  marginLeft: "9%", marginTop: "23%"},
       image: "images/Television_old.png",
       button:{button_image: "url('images/ButtonTV.png')", button_width: 0.04, button_height: 0.05},
-      volume_bar:{ marginLeft: "10%", marginTop: "55%"},
-      channel_style: {marginTop: "22%", marginLeft: "10%"}
+      volume_bar:{ marginLeft: "10%", marginTop: "54%"},
+      channel_style: {marginTop: "24%", marginLeft: "10%"}
     },
     1: {
       css: {width: boxWidth *0.9, position:"absolute", marginLeft: "5%", marginTop: "7%"},
@@ -408,7 +408,7 @@ const MainScreen = (props) => {
         {props.show ? (         
          
           <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
-           
+           {STYLE === 0 && <div className='empty_black'></div>}
             {/** Reproductor de video */}
             <div style={styles[STYLE].css}>
               <VideoJS  options={playerOptions}
