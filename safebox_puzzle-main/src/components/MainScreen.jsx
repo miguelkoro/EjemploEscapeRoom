@@ -8,6 +8,9 @@ import "video.js/dist/video-js.css";
 import "videojs-youtube";
 import { use } from 'react';
 import Remote from './Remote.jsx'; // Importa el componente Remote
+import FuzzyOverlayExample from './FuzzyOverlay.jsx';
+
+//https://www.dargolan.com/overlays video ruido blanco
 
 const MainScreen = (props) => {
   const [checking, setChecking] = useState(false);
@@ -37,21 +40,33 @@ const MainScreen = (props) => {
   const MIN_LENGHT = 4; //Longitud minima de la contraseña
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
-  const STYLE = 0 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
+  const STYLE = 2 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
   const styles = {
     0: {
       css: {width: boxWidth *0.60, position:"absolute",  marginLeft: "9%", marginTop: "23%"},
       image: "images/Television_old.png",
       button:{button_image: "url('images/ButtonTV.png')", button_width: 0.04, button_height: 0.05},
       volume_bar:{ marginLeft: "10%", marginTop: "54%"},
-      channel_style: {marginTop: "24%", marginLeft: "10%"}
+      channel_style: {marginTop: "24%", marginLeft: "10%"},
+      black_screen: {top: "20%", left: "5%"}
     },
     1: {
       css: {width: boxWidth *0.9, position:"absolute", marginLeft: "5%", marginTop: "7%"},
-      image: "images/Television_modern.png",
+      image: "url(images/Remote.png)",
+      remote: "images/Remote_modern.png",
       button:{button_image: "url('images/Button_remote.png')", button_width: 0.055, button_height: 0.1},
       volume_bar:{ marginLeft: "19%", marginTop: "52%"},
-      channel_style: {marginTop: "10%", marginLeft: "10%"}
+      channel_style: {marginTop: "10%", marginLeft: "10%"},
+      black_screen: {top: "20%", left: "5%"}
+    },
+    2: {
+      css: {width: boxWidth *0.73, position:"absolute", marginLeft: "13.5%", marginTop: "9%"},
+      image: "images/TV_VHS.png",
+      remote: "url(images/Remote_old.png)",
+      button:{button_image: "url('images/Button_remote.png')", button_width: 0.055, button_height: 0.1},
+      volume_bar:{ marginLeft: "19%", marginTop: "47%"},
+      channel_style: {marginTop: "10%", marginLeft: "14%"},
+      black_screen: {top: "10%", left: "5%"}
     },
   }
 
@@ -406,13 +421,13 @@ const MainScreen = (props) => {
   return (
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }>
         {props.show ? (         
-         
+          
           <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
-           {STYLE === 0 && <div className='empty_black'></div>}
+           {STYLE !== 1  && <div className='empty_black' style={styles[STYLE].black_screen}></div>}
             {/** Reproductor de video */}
-            <div style={styles[STYLE].css}>
+            <div style={styles[STYLE].css}><FuzzyOverlayExample style={styles[STYLE].css}>
               <VideoJS  options={playerOptions}
-                onReady={(player) => {playerRef.current = player;}}/>     
+                onReady={(player) => {playerRef.current = player;}}/> </FuzzyOverlayExample>    
             </div>
             <img id="television" src={styles[STYLE].image} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute"}}/>
              {/** Luces de correcto o incorrecto*/}
@@ -434,7 +449,7 @@ const MainScreen = (props) => {
 
             {/* Fila de botones */}
             { STYLE === 0 ? TV_old_Buttons : <div style={{overflow: "hidden", width: boxWidth, height:boxHeight, position:"absolute"}}>
-                <Remote boxWidth={boxWidth} boxHeight={boxHeight} onClickButton={onClickButton} decreaseVolume={decreaseVolume} increaseVolume={increaseVolume} button={styles[STYLE].button}/></div>}
+                <Remote boxWidth={boxWidth} boxHeight={boxHeight} onClickButton={onClickButton} decreaseVolume={decreaseVolume} increaseVolume={increaseVolume} button={styles[STYLE].button} remote={styles[STYLE].remote}/></div>}
             {/*Audios*/}
             <audio id="audio_failure" src="sounds/access-denied.mp3" autostart="false" preload="auto" />
             <audio id="audio_success" src="sounds/correct.mp3" autostart="false" preload="auto" />

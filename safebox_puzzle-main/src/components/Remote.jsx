@@ -3,7 +3,7 @@ const Remote = (props) => {
 
  return (
     <div className='remote' style={{
-        backgroundImage: "url(images/Remote.png)",
+        backgroundImage: props.remote,
         height: props.boxHeight * 0.8, 
       }}>
         <div id="row1" className="row" style={{ top: "22%", left: "50%"}}>

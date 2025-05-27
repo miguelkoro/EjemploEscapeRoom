@@ -206,12 +206,12 @@ div.row {
 	//cursor: pointer;
 	width: 25%;
 	position: absolute;
-	left: 50%;
+	left: 70%;
 	transform: translateX(-50%);
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
-	bottom: -55%; // inicial, solo la mitad visible
+	bottom: -60%; // inicial, solo la mitad visible
 	transition: bottom 0.4s cubic-bezier(.4,2,.6,1);
 }
 .remote:hover {
@@ -219,10 +219,61 @@ div.row {
 }
 
 .empty_black {
-	background-color: rgba(22, 22, 22, 0.623);
+	background-color: rgb(10, 10, 10);
 	position: absolute;
-	top: 20%;
-	left: 5%;
+	
 	width: 90%;
 	height: 65%;
+}
+
+///
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+}
+
+body {
+	background: black;
+	color: white;
+}
+
+.container {
+	position: relative;
+	overflow: hidden;
+}
+
+.title {
+	font-size: 96px;
+}
+
+.content {
+	//height: 100%;
+	display: grid;
+	place-items: center;
+	display: flex;
+	z-index: 5;
+	//position: relative;
+}
+
+.fuzzy-overlay {
+	position: absolute;
+	inset: -200%;
+	background-image: url("images/noise.png");
+	opacity: 25%;
+	z-index: 0;
+	/* pointer-events: none; */
+
+	animation: shift 0.2s linear infinite both;
+}
+
+@keyframes shift {
+	0% {
+		transform: translateX(10%) translateY(10%);
+	}
+
+	100% {
+		transform: translateX(-10%) translateY(-10%);
+	}
 }
