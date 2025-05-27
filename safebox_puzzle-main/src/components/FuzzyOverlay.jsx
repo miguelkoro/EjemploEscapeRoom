@@ -4,11 +4,9 @@ import './../assets/scss/main.scss';
 
 const FuzzyOverlayExample = () => {
   return (
-     <div class="container">
-        <div class="content">
-        </div>
+        
         <div class="fuzzy-overlay"></div>
-    </div>
+    
   );
 };
 

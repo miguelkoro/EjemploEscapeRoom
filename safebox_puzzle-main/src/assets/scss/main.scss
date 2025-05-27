@@ -213,13 +213,14 @@ div.row {
 	background-position: center;
 	bottom: -60%; // inicial, solo la mitad visible
 	transition: bottom 0.4s cubic-bezier(.4,2,.6,1);
+	z-index: 4;
 }
 .remote:hover {
 	bottom:-20% !important;
 }
 
 .empty_black {
-	background-color: rgb(10, 10, 10);
+	background-color: rgb(0, 0, 0);
 	position: absolute;
 	
 	width: 90%;
@@ -259,9 +260,10 @@ body {
 
 .fuzzy-overlay {
 	position: absolute;
+	
 	inset: -200%;
-	background-image: url("images/noise.png");
-	opacity: 25%;
+	background-image: url("images/black-noise.png");
+	opacity: 20%;
 	z-index: 0;
 	/* pointer-events: none; */
 

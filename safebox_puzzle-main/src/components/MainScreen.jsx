@@ -422,14 +422,16 @@ const MainScreen = (props) => {
       <div id="screen_main" className={"screen_wrapper" + (props.show ? "" : " screen_hidden") }>
         {props.show ? (         
           
-          <div style={{width: boxWidth , height: boxHeight, position: "relative" }}>
+          <div style={{width: boxWidth , height: boxHeight, position: "relative"}}>
            {STYLE !== 1  && <div className='empty_black' style={styles[STYLE].black_screen}></div>}
             {/** Reproductor de video */}
-            <div style={styles[STYLE].css}><FuzzyOverlayExample style={styles[STYLE].css}>
+            <div className='video_container' style={styles[STYLE].css}>
               <VideoJS  options={playerOptions}
-                onReady={(player) => {playerRef.current = player;}}/> </FuzzyOverlayExample>    
-            </div>
-            <img id="television" src={styles[STYLE].image} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute"}}/>
+                onReady={(player) => {playerRef.current = player;}}/>
+                
+            </div> 
+            <div style={{overflow:"hidden", position:"absolute", width:"85%", height:"70%", left:"10%", top:"10%", zIndex:2}}><FuzzyOverlayExample/></div>
+            <img id="television" src={styles[STYLE].image} alt="Television" style={{width: boxWidth, height: boxHeight, position: "absolute", zIndex:"3"}}/>
              {/** Luces de correcto o incorrecto*/}
             <div className="boxlight boxlight_off" style={{position: "absolute", display: light === "off" ? "block" : "none", marginLeft: "90%", marginTop: "17%" }} ></div> 
             <div className="boxlight boxlight_red" style={{position: "absolute", display: light === "red" ? "block" : "none", marginLeft: "90%", marginTop: "17%"  }} ></div> 
