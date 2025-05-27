@@ -40,21 +40,21 @@ const MainScreen = (props) => {
   const MIN_LENGHT = 4; //Longitud minima de la contraseña
   // //Tiene que ser de 5 digitos o cambiarlo en el archivo config
 
-  const STYLE = 2 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
+  const STYLE = 1 // 0 = Televisión CTR, 1 = Television Plana , 4 = Proyector
   const styles = {
     0: {
       css: {width: boxWidth *0.60, position:"absolute",  marginLeft: "9%", marginTop: "23%"},
       image: "images/Television_old.png",
-      button:{button_image: "url('images/ButtonTV.png')", button_width: 0.04, button_height: 0.05},
+      button:{button_image: "url('images/ButtonTV.png')", button_width: 0.04, button_height: 0.05, color: "#ffffff"},
       volume_bar:{ marginLeft: "10%", marginTop: "54%"},
       channel_style: {marginTop: "24%", marginLeft: "10%"},
       black_screen: {top: "20%", left: "5%"}
     },
     1: {
       css: {width: boxWidth *0.9, position:"absolute", marginLeft: "5%", marginTop: "7%"},
-      image: "url(images/Remote.png)",
-      remote: "images/Remote_modern.png",
-      button:{button_image: "url('images/Button_remote.png')", button_width: 0.055, button_height: 0.1},
+      image: "images/Television_modern.png",
+      remote: "url(images/Remote.png)",
+      button:{button_image: "url('images/Button_remote.png')", button_width: 0.055, button_height: 0.1, color: "#ffffff"},
       volume_bar:{ marginLeft: "19%", marginTop: "52%"},
       channel_style: {marginTop: "10%", marginLeft: "10%"},
       black_screen: {top: "20%", left: "5%"}
@@ -63,7 +63,7 @@ const MainScreen = (props) => {
       css: {width: boxWidth *0.73, position:"absolute", marginLeft: "13.5%", marginTop: "9%"},
       image: "images/TV_VHS.png",
       remote: "url(images/Remote_old.png)",
-      button:{button_image: "url('images/Button_remote.png')", button_width: 0.055, button_height: 0.1},
+      button:{button_image: "url('images/button_2.png')", button_width: 0.055, button_height: 0.1, color: "#000000"},
       volume_bar:{ marginLeft: "19%", marginTop: "47%"},
       channel_style: {marginTop: "10%", marginLeft: "14%"},
       black_screen: {top: "10%", left: "5%"}

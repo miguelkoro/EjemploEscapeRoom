@@ -11,7 +11,7 @@ const BoxButton = (props) => {
         }}>
         <li>
 
-          <p>{props.value}</p>
+          <p style={{color: props.button.color}}>{props.value}</p>
         </li>
       </div>
     </div>
